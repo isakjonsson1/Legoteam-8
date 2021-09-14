@@ -1,7 +1,13 @@
 #!/usr/bin/env pybricks-micropython
 from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
-                                 InfraredSensor, UltrasonicSensor, GyroSensor)
+from pybricks.ev3devices import (
+    Motor,
+    TouchSensor,
+    ColorSensor,
+    InfraredSensor,
+    UltrasonicSensor,
+    GyroSensor,
+)
 from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
@@ -15,10 +21,10 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 ev3 = EV3Brick()
 leftMotor = Motor(port=Port.A)
 rightMotor = Motor(port=Port.B)
-robot = DriveBase(leftMotor, rightMotor, wheel_diameter=56, 
-    axle_track=82.1)
+robot = DriveBase(leftMotor, rightMotor, wheel_diameter=56, axle_track=82.1)
 
-    # Wheel width: 28mm 
+# Wheel width: 28mm
+# test
 
 # Write your program here.
 def main():
@@ -32,14 +38,17 @@ def main():
     ev3.speaker.say("Have a nice day!")
     wait(5000)
 
+
 def drive(avstand):
     wait(100)
     robot.straight(-avstand)
     wait(100)
 
+
 def turn(vinkel):
     robot.turn(vinkel)
-    
+
+
 def rektangel(x, y):
     drive(x)
     turn(90)
@@ -49,6 +58,7 @@ def rektangel(x, y):
     turn(90)
     drive(y)
     turn(90)
+
 
 if __name__ == "__main__":
     main()
