@@ -28,14 +28,16 @@ robot = DriveBase(leftMotor, rightMotor, wheel_diameter=56, axle_track=82.1)
 
 # Write your program here.
 def main():
-    ev3.speaker.beep()
+    #ev3.speaker.beep()
 
-    ev3.screen.print("Hello world")
-    wait(2000)
+    #ev3.screen.print("Hello world")
+    #wait(2000)
 
-    rektangel(200, 100)
+    #rektangel(200, 100)
 
-    ev3.speaker.say("Have a nice day!")
+    ev3.speaker.set_speech_options(language="no", voice="croak", speed=None, pitch=None)
+    ev3.speaker.set_volume(volume(100%), which='_all_')
+    ev3.speaker.say("Ha en fin dag")
     wait(5000)
 
 
