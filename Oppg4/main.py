@@ -23,14 +23,9 @@ front_color_sensor = ColorSensor(port=Port.S1)
 
 # Write your program here.
 def main():
-    thread = threading.Thread(
-        target=ev3.speaker.play_file,
-        args=(SoundFile.FANFARE,)
-    )
-    thread.start()
-
     # Drive while distance to foreign object is more than 100
-    while ultrasonic_sensor.distance() > 100:
+    ## Ignore for now
+    while ultrasonic_sensor.distance() > 100 or True:
         # There are two sensors. The back sensor will steer the robot
         # by following the left side of the black tape. This means that
         # if the robot detects > 80% white, it should turn to the right
@@ -47,13 +42,7 @@ def main():
             robot.drive(SLOW, turn)
         else:
             # Shouldn't be turning when we're going FAAAST AF! xD
-            robot.drive(FAST)
-            if not thread.is_alive():
-                thread = threading.Thread(
-                    target=ev3.speaker.play_file,
-                    args=(SoundFile.FANFARE,)
-                )
-                thread.start()
+            robot.drive(FAST, 0)
 
     robot.stop()
     ev3.speaker.play_file(SoundFile.CHEERING)
