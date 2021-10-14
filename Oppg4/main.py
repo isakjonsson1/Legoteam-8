@@ -23,6 +23,9 @@ front_color_sensor = ColorSensor(port=Port.S1)
 
 # Write your program here.
 def main():
+    # Calibrate black threshold
+    BLACK_THRESH = get_brightness(front_color_sensor) + 10
+
     # Drive while distance to foreign object is more than 100
     ## Ignore for now
     while ultrasonic_sensor.distance() > 100 or True:
