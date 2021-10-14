@@ -1,3 +1,3 @@
-FAST = -120 # Speed when going fast as fuccboi
-SLOW = -70 # Speed when going slow
-TURN_SPEED = 70 # How fast the robot should turn
+FAST = -3000 # Speed when going fast as fuccboi
+SLOW = -120 # Speed when going slow
+TURN_SPEED = 50 # How fast the robot should turn

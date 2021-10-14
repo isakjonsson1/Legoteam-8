@@ -51,7 +51,7 @@ def main():
 def get_brightness(color_sensor):
     """Returns the brightness (black - white) from 0 - 100"""
     # https://www.rapidtables.com/convert/color/rgb-to-hsv.html
-    return max(color_sensor.rgb())
+    return max(color_sensor.rgb()) / 255 * 100
     
 
 if __name__ == "__main__":
