@@ -32,26 +32,28 @@ def main():
         # if the robot detects > 80% black, it should turn to the left
 
         turn = 0
-        if get_brightness(back_color_sensor) > 80:
+        if get_brightness(back_color_sensor) > WHITE_THRESH:
+            # Too much white!
             turn = TURN_SPEED
-        if get_brightness(back_color_sensor) < 20:
+        if get_brightness(back_color_sensor) < BLACK_THRESH:
+            # Too much black!
             turn = -TURN_SPEED
 
-        if get_brightness(front_color_sensor) > 80:
-            # The front sensor is detecting white. SLOW DOWN!
-            robot.drive(SLOW, turn)
-        else:
-            # Shouldn't be turning when we're going FAAAST AF! xD
+        if get_brightness(front_color_sensor) < BLACK_THRESH:
+            # Black ahead! Goooo faaaAaast !!!!!
             robot.drive(FAST, 0)
+        else:
+            # White ahead, we should probably be cautious...
+            robot.drive(SLOW, turn)
 
     robot.stop()
     ev3.speaker.play_file(SoundFile.CHEERING)
 
 
 def get_brightness(color_sensor):
-    """Returns the brightness (black - white) from 0 - 100"""
+    """Returns the brightness (black - white) from 0 - 255"""
     # https://www.rapidtables.com/convert/color/rgb-to-hsv.html
-    return max(color_sensor.rgb()) / 255 * 100
+    return max(color_sensor.rgb())
     
 
 if __name__ == "__main__":
