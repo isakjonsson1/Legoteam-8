@@ -1,0 +1,7 @@
+left_motor = Motor(port=Port.A)
+right_motor = Motor(port=Port.B)
+button = TouchSensor(port=Port.S3)
+robot = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=82.1)
+back_color_sensor = ColorSensor(port=Port.S2)
+front_color_sensor = ColorSensor(port=Port.S1)
+ev3 = EV3Brick()
