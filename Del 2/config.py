@@ -1,3 +1,4 @@
+"""Configuration file"""
 from pybricks.ev3devices import Motor
 from pybricks.ev3devices import TouchSensor
 from pybricks.ev3devices import ColorSensor

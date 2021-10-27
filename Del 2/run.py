@@ -1,27 +1,30 @@
+"""Entrypoint file"""
+import sys
+
 from matplotlib import pyplot as plt
 
-from config import *
+# from config import *
 from app.point import Point as P
 from app.curves import Line
 from app.curves import NthDegreeCurve
 from app.utils.plotting import plot_curve
 
-import sys
 
 def main():
+    """Program entrypoint - Here comes the main logic"""
     points = [P(0.25, 0), P(0, 1), P(1, 1), P(0.75, 0), P(0, -1), P(1, -1)]
-    c = NthDegreeCurve(points)
+    curve = NthDegreeCurve(points)
 
-    print(c.length())
-    print(c.get_t(2))
-    print(c.get_acc(0))
+    print(curve.length())
+    print(curve.get_t(2))
+    print(curve.get_acc(0))
 
-    l = Line([P(0, 0), P(1, 1)])
-    print(l.get_acc(0))
+    line = Line([P(0, 0), P(1, 1)])
+    print(line.get_acc(0))
 
-    plot_curve(c)
-    plot_curve(l)
-    for point in c.points:
+    plot_curve(curve)
+    plot_curve(line)
+    for point in curve.points:
         plt.plot(point.x, point.y, marker="o")
     plt.show()
 
