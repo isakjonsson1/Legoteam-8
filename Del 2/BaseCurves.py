@@ -1,15 +1,52 @@
 from math import atan2
 from numpy import linspace
+from abc import ABC, abstractmethod
 
 
-class BaseCurve:
+class Curve(ABC):
+    """An abstract class for all curves"""
+
     def __init__(self, points):
         """
         Creates a Curve based on an arbitrary list of points.
-        This is a baseclass and should not be instanced by itself.
+        This is an abstract class and cannot be instanced by itself.
         """
 
         self.points = points
+
+    @abstractmethod
+    def get_pos(self, t):
+        """
+        Returns the position at a given t value [0, 1]
+        where 0 is the start of the curve and 1 is the end of the curve.
+        """
+        pass
+
+    @abstractmethod
+    def get_vel(self, t):
+        """
+        Returns the velocity at a given t value [0, 1] (the first order derivative)
+        where 0 is the start of the curve and 1 is the end of the curve.
+        """
+        pass
+
+    @abstractmethod
+    def get_acc(self, t):
+        """
+        Returns the acceleration at a given t value [0, 1] (the second order derivative)
+        where 0 is the start of the curve and 1 is the end of the curve.
+        """
+        pass
+
+    @abstractmethod
+    def get_t(self, L):
+        """Finds a t given a an arc-length L"""
+        pass
+
+    @abstractmethod
+    def length(self):
+        """Returns the toatal arc-lengt of the curve"""
+        pass
 
     def get_curvature(self, t):
         """
@@ -46,12 +83,31 @@ class BaseCurve:
         return points_abs
 
 
-class BaseLUTCurve(BaseCurve):
+class LinearCurve(Curve):
+    """
+    An abstract class for linear curves. This type of curve assumes that
+    atraversed distance is proportional at any point on the curve
+    """
+
+    def __init__(self, points):
+        """Creates a curve given a list of points"""
+        super().__init__(points)
+
+    def get_t(self, L):
+        """Finds a t given a an arc-length L"""
+        return L / self.length()
+
+
+class NonLinearCurve(Curve):
+    """
+    An abstranct class for nonlinear curves. Uses a look-up table to convert
+    from traversed distance to the t value of a given point on the curve.
+    """
+
     def __init__(self, points, n=100, generate_LUT=True):
         """
         Creates a Curve and generates a look-up table (LUT) for the curve based
-        on an arbitrary list of points. This is a baseclass and should not
-        be instanced by itself. n is the number of entries in the LUT
+        on an arbitrary list of points.
         """
 
         super().__init__(points)
