@@ -1,3 +1,5 @@
+from math import sqrt
+
 from app.curves import Line
 from app.curves import NthDegreeCurve
 from app.point import Point as P
@@ -8,7 +10,7 @@ def test_line():
         P(1, 1)
     ]
     l = Line(points)
-    assert l.length() == 2**0.5
+    assert l.length() == sqrt(2)
     assert l.get_t(1) == 1 / l.length()
     assert l.get_t(2) == 2 / l.length()
 
@@ -23,3 +25,6 @@ def test_nth_degree_curve():
     ]
     c = NthDegreeCurve(points)
     # More testing
+
+    # Tanken her er at vi kan kjøre tests for å sjekke om endringer ødelegger
+    # funksjonaliteten i koden vår
