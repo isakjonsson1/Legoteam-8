@@ -34,7 +34,7 @@ class Point:
 
         return self.x == other.x and self.y == other.y
 
-    def __len__(self):
+    def __abs__(self):
         return sqrt(self.x ** 2 + self.y ** 2)
 
     def __str__(self):
