@@ -1,4 +1,5 @@
 from app.abc import LinearCurve
+from app.point import Point
 
 class Line(LinearCurve):
     def __init__(self, points):

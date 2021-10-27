@@ -1,3 +1,5 @@
+from app.abc import Curve
+
 class LinearCurve(Curve):
     """
     An abstract class for linear curves. This type of curve assumes that
