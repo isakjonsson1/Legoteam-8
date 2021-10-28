@@ -2,6 +2,7 @@
 from numpy import linspace
 from app.abc import Curve
 
+
 class NonLinearCurve(Curve):
     """
     An abstract class for nonlinear curves. Uses a look-up table to convert

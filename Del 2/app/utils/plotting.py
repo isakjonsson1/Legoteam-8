@@ -2,6 +2,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
+
 def plot_curve(curve):
     """Plots a given curve"""
     t_values = np.linspace(0, 1)

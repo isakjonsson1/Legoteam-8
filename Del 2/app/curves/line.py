@@ -2,6 +2,7 @@
 from app.abc import LinearCurve
 from app.point import Point
 
+
 class Line(LinearCurve):
     """Used to represent a line between two points."""
 

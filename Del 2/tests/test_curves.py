@@ -1,8 +1,7 @@
 """Used to test different classes and methods"""
-
 import pytest
-from app.abc.non_linear_curve import NonLinearCurve
 
+from app.abc.non_linear_curve import NonLinearCurve
 from app.curves import Line
 from app.curves import QuadraticCurve
 from app.curves import NthDegreeCurve

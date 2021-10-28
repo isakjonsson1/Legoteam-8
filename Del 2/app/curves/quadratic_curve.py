@@ -1,6 +1,7 @@
 """Contais the QuadraticCurve class"""
 from app.abc import NonLinearCurve
 
+
 class QuadraticCurve(NonLinearCurve):
     """Used to represent a quadratic Bézier Curve"""
 
