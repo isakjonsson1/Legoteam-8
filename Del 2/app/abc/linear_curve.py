@@ -1,3 +1,5 @@
+"""Contains the abstract class LinearCurve"""
+
 from app.abc import Curve
 
 
@@ -11,9 +13,11 @@ class LinearCurve(Curve):
         """Creates a curve given a list of points"""
         super().__init__(points)
 
-    def get_t(self, L):
-        """Finds a t given a an arc-length L"""
-        if L < 0 or self.length() <= L:
-            raise ValueError("L needs to greater than 0 and under the total arc-length")
+    def get_t(self, traversed_length):
+        """Finds a t given a traversed arc-length"""
+        if traversed_length < 0 or self.length() <= traversed_length:
+            raise ValueError(
+                "traversed length needs to be greater than 0 and under the total arc-length"
+            )
 
-        return L / self.length()
+        return traversed_length / self.length()

@@ -1,3 +1,5 @@
+"""Used to test different classes and methods"""
+
 import pytest
 from app.abc.non_linear_curve import NonLinearCurve
 
@@ -5,12 +7,20 @@ from app.curves import Line
 from app.curves import QuadraticCurve
 from app.curves import NthDegreeCurve
 from app.curves.cubic_curve import CubicCurve
-from app.point import Point as P
+from app.point import Point
 
-points = [P(0.25, 0), P(0, 1), P(1, 1), P(0.75, 0), P(0, -1), P(1, -1)]
+points = [
+    Point(0.25, 0),
+    Point(0, 1),
+    Point(1, 1),
+    Point(0.75, 0),
+    Point(0, -1),
+    Point(1, -1),
+]
 
 
 def test_line():
+    """Tests the Line class"""
     l = Line(points[1:3])
     assert l.length() == 1
     assert l.get_t(0.5) == 0.5 / l.length()
@@ -23,6 +33,7 @@ def test_line():
 
 
 def test_quadratic_curve():
+    """Tests the QuadraticCurve class"""
     c = QuadraticCurve(points[:3])
 
     with pytest.raises(ValueError):
@@ -33,6 +44,7 @@ def test_quadratic_curve():
 
 
 def test_quadratic_curve():
+    """Tests the CubicCurve class"""
     c = CubicCurve(points[:4])
 
     with pytest.raises(ValueError):
@@ -43,6 +55,7 @@ def test_quadratic_curve():
 
 
 def test_nth_degree_curve():
+    """Tests the NthDegreeCurve class"""
     c = NthDegreeCurve(points)
 
     with pytest.raises(ValueError):
@@ -52,12 +65,13 @@ def test_nth_degree_curve():
 
 
 def _test_curve(curve):
+    """Tests any curve"""
     assert curve.length() > 0
     assert curve.get_t(0) == 0
     assert curve.get_pos(1) == curve.get_endpoint()
-    assert isinstance(curve.get_pos(0.5), P)
-    assert isinstance(curve.get_vel(0.5), P)
-    assert isinstance(curve.get_acc(0.5), P)
+    assert isinstance(curve.get_pos(0.5), Point)
+    assert isinstance(curve.get_vel(0.5), Point)
+    assert isinstance(curve.get_acc(0.5), Point)
 
     with pytest.raises(ValueError):
         curve.get_t(-1)
@@ -65,5 +79,5 @@ def _test_curve(curve):
 
     if isinstance(curve, NonLinearCurve):
         # Checks that the keys in the the look-up table are sorted
-        keys = list(curve.LUT.keys())
+        keys = list(curve.look_up_table.keys())
         assert all(keys[i] <= keys[i + 1] for i in range(len(keys) - 1))

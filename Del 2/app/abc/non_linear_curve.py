@@ -1,3 +1,5 @@
+"""Contains the abstract class NonLinearCurve"""
+
 from numpy import linspace
 
 from app.abc import Curve
@@ -9,57 +11,61 @@ class NonLinearCurve(Curve):
     from traversed distance to the t value of a given point on the curve.
     """
 
-    def __init__(self, points, n=100, generate_LUT=True):
+    def __init__(self, points, number_of_entries=100, generate_lut=True):
         """
         Creates a Curve and generates a look-up table (LUT) for the curve based
         on an arbitrary list of points.
         """
         super().__init__(points)
-        if generate_LUT:
-            self.LUT = self.generate_LUT(n)
+        if generate_lut:
+            self.look_up_table = self.generate_lut(number_of_entries)
 
-    def generate_LUT(self, n):
+    def generate_lut(self, number_of_entries):
         """Generates a look-up table to convert from distance to t values [0, 1]"""
 
         # Initiates a new dict as an empty look-up table
-        LUT = dict()
+        look_up_table = {}
 
         # Samples of t in the interval [0, 1]
-        ts = linspace(0, 1, n + 1)
+        t_params = linspace(0, 1, number_of_entries + 1)
 
-        L = 0
-        LUT[L] = 0
+        traversed_length = 0
+        look_up_table[traversed_length] = 0
 
-        last = self.get_pos(ts[0])
-        for t in ts[1:]:
-            current = self.get_pos(t)
-            l = abs(current - last)
+        last = self.get_pos(t_params[0])
+        for t_param in t_params[1:]:
+            current = self.get_pos(t_param)
+            step_length = abs(current - last)
             last = current
-            L += l
-            LUT[L] = t
+            traversed_length += step_length
+            look_up_table[traversed_length] = t_param
 
-        return LUT
+        return look_up_table
 
-    def get_t(self, L):
+    def get_t(self, traversed_length):
         """Finds a t given a an arc-length L"""
-        if L < 0 or self.length() <= L:
+        if traversed_length < 0 or self.length() <= traversed_length:
             raise ValueError("L needs to greater than 0 and under the total arc-length")
 
-        min_L, max_L = self.bin_search_LUT(L)
-        min_t, max_t = self.LUT[min_L], self.LUT[max_L]
+        # Max and min traversed length
+        min_length, max_length = self.bin_search_lut(traversed_length)
 
-        ratio = (L - min_L) / (max_L - min_L)
+        # Max and min t_param
+        min_t, max_t = self.look_up_table[min_length], self.look_up_table[max_length]
+
+        ratio = (traversed_length - min_length) / (min_length - max_length)
         return (max_t - min_t) * ratio + min_t
 
-    def bin_search_LUT(self, L):
+    def bin_search_lut(self, traversed_length):
         """
         Returns an two values. The first one is the lower bound of the value from
         the look-up table (inclusive), and the other one is the upper bound (exclusive)
         """
-        keys = list(self.LUT.keys())
+        keys = list(self.look_up_table.keys())
 
         # Min and max index
         min_i, max_i = 0, len(keys) - 1
+
         # Min and max value
         min_v, max_v = 0, keys[max_i]
 
@@ -67,7 +73,7 @@ class NonLinearCurve(Curve):
             mid_i = (min_i + max_i) // 2
             mid_v = keys[mid_i]
 
-            if L < mid_v:
+            if traversed_length < mid_v:
                 max_i = mid_i
                 max_v = mid_v
             else:
@@ -79,4 +85,4 @@ class NonLinearCurve(Curve):
 
     def length(self):
         """Returns the toatal arc-lengt of the curve"""
-        return list(self.LUT.keys())[-1]
+        return list(self.look_up_table.keys())[-1]

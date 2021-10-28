@@ -1,4 +1,5 @@
 """Utility functions for plotting"""
+
 from matplotlib import pyplot as plt
 import numpy as np
 
@@ -14,4 +15,5 @@ def plot_curve(curve):
 
 
 def plot_point(point):
+    """Plots a point"""
     plt.plot(point.x, point.y, marker="o")
