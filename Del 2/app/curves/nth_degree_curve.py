@@ -1,6 +1,7 @@
 from app.abc import NonLinearCurve
 from app.curves import CubicCurve
 
+
 class NthDegreeCurve(NonLinearCurve):
     def __init__(self, points, generate_LUT=True):
         """

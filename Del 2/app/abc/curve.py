@@ -1,6 +1,7 @@
 from math import atan2
 from abc import ABC, abstractmethod
 
+
 class Curve(ABC):
     """An abstract class for all curves"""
 
@@ -17,7 +18,6 @@ class Curve(ABC):
         Returns the position at a given t value [0, 1]
         where 0 is the start of the curve and 1 is the end of the curve.
         """
-        pass
 
     @abstractmethod
     def get_vel(self, t):
@@ -25,7 +25,6 @@ class Curve(ABC):
         Returns the velocity at a given t value [0, 1] (the first order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
         """
-        pass
 
     @abstractmethod
     def get_acc(self, t):
@@ -33,17 +32,14 @@ class Curve(ABC):
         Returns the acceleration at a given t value [0, 1] (the second order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
         """
-        pass
 
     @abstractmethod
     def get_t(self, L):
         """Finds a t given a an arc-length L"""
-        pass
 
     @abstractmethod
     def length(self):
         """Returns the toatal arc-lengt of the curve"""
-        pass
 
     def get_curvature(self, t):
         """

@@ -1,5 +1,6 @@
 from app.abc import NonLinearCurve
 
+
 class QuadraticCurve(NonLinearCurve):
     def __init__(self, points, generate_LUT=True):
         """
