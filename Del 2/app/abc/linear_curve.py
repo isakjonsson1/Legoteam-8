@@ -1,5 +1,4 @@
 """Contains the abstract class LinearCurve"""
-
 from app.abc import Curve
 
 
