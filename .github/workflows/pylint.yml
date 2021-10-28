@@ -17,6 +17,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pylint
+        cd "Del 2"
     - name: Analysing the code with pylint
       run: |
-        pylint `ls -R|grep .py$|xargs`
+        pylint run.py
+        pylint config.py
+        pylint app
