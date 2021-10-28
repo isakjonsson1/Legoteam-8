@@ -1,15 +1,25 @@
+"""Contains the Path class"""
 from app.abc.curve import Curve
 from app.utils.plotting import plot_curve
 
 
 class Path(list):
-    def __init__(self, iterable=list()):
-        super().__init__(iterable)
-        if not all(isinstance(curve, Curve) for curve in self):
-            TypeError(
-                "The iterable supplied must only contain "
-                "instances of the class, or subclasses of the class Curve"
-            )
+    """Represents a path (list of curves)"""
+
+    def __init__(self, iterable=None):
+        """
+        Creates a new path.
+        Can take an iterable containing curves as an argument.
+        """
+        if iterable is not None:
+            super().__init__(iterable)
+            if not all(isinstance(curve, Curve) for curve in self):
+                raise TypeError(
+                    "The iterable supplied must only contain "
+                    "instances of the class, or subclasses of the class Curve"
+                )
+        else:
+            super().__init__()
 
     def append(self, curve):
         """Appends curve at the end of path"""
