@@ -2,6 +2,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
+
 def plot_curve(curve):
     """Plots a given curve"""
     t_values = np.linspace(0, 1)
@@ -10,3 +11,7 @@ def plot_curve(curve):
     x = [p.x for p in points]
     y = [p.y for p in points]
     plt.plot(x, y)
+
+
+def plot_point(point):
+    plt.plot(point.x, point.y, marker="o")
