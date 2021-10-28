@@ -40,4 +40,4 @@ jobs:
     - name: Test with pytest
       run: |
         cd "Del 2"
-        pytest
+        python -m pytest
