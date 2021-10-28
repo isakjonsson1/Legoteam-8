@@ -54,14 +54,23 @@ class Curve(ABC):
 
         return (vel.x * acc.y - vel.y * acc.x) / ((vel.x ** 2 + vel.y ** 2) ** (3 / 2))
 
-    def get_endpoint(self):
+    def get_start_pos(self):
+        return self.points[0]
+
+    def get_start_angle(self):
+        return self.get_angle(0)
+
+    def get_end_pos(self):
         """Returns the absolute position where the curve ended"""
         return self.points[-1]
 
-    def get_exit_angle(self):
+    def get_end_angle(self):
         """Returns the exit angle where the curve ends"""
-        exit_vel = self.get_vel(1)
-        atan2(exit_vel.y, exit_vel.x)
+        return self.get_angle(1)
+
+    def get_angle(self, t_param):
+        vel = self.get_vel(t_param)
+        return atan2(vel.y, vel.x)
 
     @staticmethod
     def convert_rel_points_to_abs_points(base, rel_points):
