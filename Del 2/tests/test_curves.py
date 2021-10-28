@@ -1,4 +1,5 @@
 """Used to test different classes and methods"""
+import math
 import pytest
 
 from app.abc.non_linear_curve import NonLinearCurve
@@ -9,7 +10,7 @@ from app.curves.cubic_curve import CubicCurve
 from app.point import Point
 
 points = [
-    Point(0.25, 0),
+    Point(0, 0),
     Point(0, 1),
     Point(1, 1),
     Point(0.75, 0),
@@ -20,7 +21,7 @@ points = [
 
 def test_line():
     """Tests the Line class"""
-    l = Line(points[1:3])
+    l = Line(points[:2])
     assert l.length() == 1
     assert l.get_t(0.5) == 0.5 / l.length()
 
@@ -37,7 +38,7 @@ def test_quadratic_curve():
 
     with pytest.raises(ValueError):
         QuadraticCurve(points[:2])
-        QuadraticCurve(points[0:4])
+        QuadraticCurve(points[:4])
 
     _test_curve(c)
 
@@ -48,7 +49,7 @@ def test_quadratic_curve():
 
     with pytest.raises(ValueError):
         CubicCurve(points[:3])
-        QuadraticCurve(points[0:5])
+        QuadraticCurve(points[:5])
 
     _test_curve(c)
 
@@ -58,7 +59,7 @@ def test_nth_degree_curve():
     c = NthDegreeCurve(points)
 
     with pytest.raises(ValueError):
-        NthDegreeCurve(points[0:3])
+        NthDegreeCurve(points[:3])
 
     _test_curve(c)
 
@@ -67,7 +68,9 @@ def _test_curve(curve):
     """Tests any curve"""
     assert curve.length() > 0
     assert curve.get_t(0) == 0
-    assert curve.get_pos(1) == curve.get_endpoint()
+    assert curve.get_pos(1) == curve.get_end_pos()
+    assert curve.get_start_angle() == math.pi / 2
+
     assert isinstance(curve.get_pos(0.5), Point)
     assert isinstance(curve.get_vel(0.5), Point)
     assert isinstance(curve.get_acc(0.5), Point)
