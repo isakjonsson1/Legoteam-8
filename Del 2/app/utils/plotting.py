@@ -1,8 +1,6 @@
 """Utility functions for plotting"""
-
 from matplotlib import pyplot as plt
 import numpy as np
-
 
 def plot_curve(curve):
     """Plots a given curve"""

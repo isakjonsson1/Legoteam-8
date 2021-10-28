@@ -1,8 +1,6 @@
 """Contains the NthDegreeCurve class"""
-
 from app.abc import NonLinearCurve
 from app.curves import CubicCurve
-
 
 class NthDegreeCurve(NonLinearCurve):
     """Used to represent a Bézier Curve of nth degree where n > 4"""

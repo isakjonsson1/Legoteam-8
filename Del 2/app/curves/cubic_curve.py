@@ -1,7 +1,5 @@
 """Contains the CubicCurve class"""
-
 from app.abc import NonLinearCurve
-
 
 class CubicCurve(NonLinearCurve):
     """A curve used to represent a cubic Bézier Curve"""

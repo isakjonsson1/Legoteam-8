@@ -1,9 +1,6 @@
 """Contains the abstract class NonLinearCurve"""
-
 from numpy import linspace
-
 from app.abc import Curve
-
 
 class NonLinearCurve(Curve):
     """

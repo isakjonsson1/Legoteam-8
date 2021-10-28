@@ -2,7 +2,6 @@
 from math import atan2
 from abc import ABC, abstractmethod
 
-
 class Curve(ABC):
     """An abstract class for all curves"""
 

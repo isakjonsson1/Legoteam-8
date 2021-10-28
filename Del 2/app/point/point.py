@@ -1,7 +1,5 @@
 """Contains the class Point"""
-
 from math import sqrt
-
 
 class Point:
     """Used to represent a 2d point"""
