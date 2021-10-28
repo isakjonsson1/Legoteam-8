@@ -39,16 +39,20 @@ class Path(list):
 
     @property
     def start_position(self):
+        """Returns the start postition of the path"""
         return self[0].get_start_pos()
 
     @property
     def start_angle(self):
+        """Returns the start angle of the path"""
         return self[0].get_start_angle()
 
     @property
     def end_position(self):
+        """Returns the end position of the path"""
         return self[-1].get_end_pos()
 
     @property
     def end_angle(self):
+        """Returns the end angle of the path"""
         return self[-1].get_end_angle()

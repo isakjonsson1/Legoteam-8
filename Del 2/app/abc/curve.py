@@ -55,9 +55,11 @@ class Curve(ABC):
         return (vel.x * acc.y - vel.y * acc.x) / ((vel.x ** 2 + vel.y ** 2) ** (3 / 2))
 
     def get_start_pos(self):
+        """Returns the start position of the curve"""
         return self.points[0]
 
     def get_start_angle(self):
+        """Returns the start position of the curve"""
         return self.get_angle(0)
 
     def get_end_pos(self):
@@ -69,6 +71,7 @@ class Curve(ABC):
         return self.get_angle(1)
 
     def get_angle(self, t_param):
+        """Returns the angle at any given t value [0,1]"""
         vel = self.get_vel(t_param)
         return atan2(vel.y, vel.x)
 
