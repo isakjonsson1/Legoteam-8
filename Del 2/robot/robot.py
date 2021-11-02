@@ -92,3 +92,6 @@ class Robot:
         """
         angle_delta = (((end_angle - self.angle) + math.pi) % math.tau) - math.pi
         self.drive_base.turn(math.degrees(angle_delta))
+        
+        # Update params
+        self.angle = end_angle
