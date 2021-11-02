@@ -49,11 +49,6 @@ class Path(list):
         """Returns the total length of the path"""
         return sum(map(lambda s: s.length(), self))
 
-    def plot_path(self):
-        """Plots the entire path"""
-        for curve in self:
-            plot_curve(curve)
-
     @property
     def start_position(self):
         """Returns the start postition of the path"""
