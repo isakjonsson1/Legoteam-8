@@ -1,5 +1,6 @@
 """Contains the Path class"""
 from app.abc.curve import Curve
+from app.utils.curve import make_curve, make_curve_relative
 from app.utils.plotting import plot_curve
 
 
@@ -27,6 +28,22 @@ class Path(list):
             raise TypeError("Appended item must be a curve")
 
         super().append(curve)
+
+    def append_curve(self, points):
+        """
+        Appends a new curve based on the current endpoint
+        and a list of control points
+        """
+        curve = make_curve([self.end_position] + points)
+        self.append(curve)
+
+    def append_curve_relative(self, points):
+        """
+        Appends a new curve based on the current endpoint
+        and a list of control points relative to it
+        """
+        curve = make_curve_relative([self.end_position] + points)
+        self.append(curve)
 
     def length(self):
         """Returns the total length of the path"""
