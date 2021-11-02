@@ -1,4 +1,5 @@
 from app.curves import Line, QuadraticCurve, CubicCurve, NthDegreeCurve
+from app.abc.curve import Curve
 
 
 def make_curve(points):
@@ -21,5 +22,5 @@ def make_curve_relative(points):
     The points gievn in a relative manner where the first point is given in absolute coordinates,
     while the other points are calculated based on it.
     """
-    points = Line.convert_rel_points_to_abs_points(points[0], points[1:])
+    points = Curve.convert_rel_points_to_abs_points(points[0], points[1:])
     return make_curve(points)
