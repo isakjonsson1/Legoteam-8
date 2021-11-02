@@ -1,7 +1,6 @@
 """Contains the Path class"""
-from app.abc.curve import Curve
+from app.abc import Curve
 from app.utils.curve import make_curve, make_curve_relative
-from app.utils.plotting import plot_curve
 
 
 class Path(list):
