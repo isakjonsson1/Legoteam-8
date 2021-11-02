@@ -1,3 +1,4 @@
+"""Util functions related to creation of curves"""
 from app.curves import Line, QuadraticCurve, CubicCurve, NthDegreeCurve
 from app.abc.curve import Curve
 
@@ -12,8 +13,8 @@ def make_curve(points):
         return CubicCurve
     if len(points) > 4:
         return NthDegreeCurve(points)
-    else:
-        raise ValueError("The number of points needs to be higher than one")
+
+    raise ValueError("The number of points needs to be higher than one")
 
 
 def make_curve_relative(points):
