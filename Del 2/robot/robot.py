@@ -77,7 +77,7 @@ class Robot:
         line = Line([self.pos, pos])
 
         # No change if line length is zero
-        if line.length < 1e-5:
+        if line.length() < 1e-5:
             # Changes angle
             self.change_angle(line.get_start_angle())
 
