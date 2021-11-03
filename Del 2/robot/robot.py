@@ -65,7 +65,7 @@ class Robot:
         while self.drive_base.distance() < curve.length() * self.scale:
             t_param = curve.get_t(self.drive_base.distance)
             curve = curve.get_curvature(t_param)
-            self.drive_base.drive(SPEED / self.scale, math.degrees(SPEED * curve))
+            self.drive_base.drive(SPEED, math.degrees(SPEED * curve / self.scale))
 
         # Updates params
         self.angle = curve.get_end_angle()
@@ -76,15 +76,17 @@ class Robot:
         # Defines the length
         line = Line([self.pos, pos])
 
-        # Changes angle
-        self.change_angle(line.get_start_angle())
+        # No change if line length is zero
+        if line.length < 1e-5:
+            # Changes angle
+            self.change_angle(line.get_start_angle())
 
-        # Drives the line
-        self.drive_base.straight(line.length() * self.scale)
+            # Drives the line
+            self.drive_base.straight(line.length() * self.scale)
 
-        # Updates params
-        self.angle = line.get_end_angle()
-        self.pos = line.get_end_pos()
+            # Updates params
+            self.angle = line.get_end_angle()
+            self.pos = line.get_end_pos()
 
     def change_angle(self, end_angle):
         """
