@@ -59,7 +59,7 @@ class Curve(ABC):
         return self.points[0]
 
     def get_start_angle(self):
-        """Returns the start position of the curve"""
+        """Returns the entry angle of the curve in radians"""
         return self.get_angle(0)
 
     def get_end_pos(self):
@@ -67,11 +67,11 @@ class Curve(ABC):
         return self.points[-1]
 
     def get_end_angle(self):
-        """Returns the exit angle where the curve ends"""
+        """Returns the exit angle where the curve ends in radians"""
         return self.get_angle(1)
 
     def get_angle(self, t_param):
-        """Returns the angle at any given t value [0,1]"""
+        """Returns the angle at any given t value [0,1] in radians"""
         vel = self.get_vel(t_param)
         return atan2(vel.y, vel.x)
 

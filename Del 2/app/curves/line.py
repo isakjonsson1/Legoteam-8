@@ -37,6 +37,9 @@ class Line(LinearCurve):
         """
         return Point(0, 0)
 
+    def get_curvature(self, t_param=None):
+        return 0
+
     def length(self):
         """Returns the total length of the curve"""
         return abs(self.points[1] - self.points[0])
