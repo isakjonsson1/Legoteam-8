@@ -1,5 +1,4 @@
 """functions related to parsing a .svg file"""
-
 import re
 from itertools import chain
 
