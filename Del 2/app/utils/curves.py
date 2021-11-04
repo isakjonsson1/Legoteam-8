@@ -10,7 +10,7 @@ def make_curve(points):
     if len(points) == 3:
         return QuadraticCurve(points)
     if len(points) == 4:
-        return CubicCurve
+        return CubicCurve(points)
     if len(points) > 4:
         return NthDegreeCurve(points)
 

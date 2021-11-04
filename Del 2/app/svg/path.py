@@ -6,20 +6,13 @@ from app.utils.curves import make_curve, make_curve_relative
 class Path(list):
     """Represents a path (list of curves)"""
 
-    def __init__(self, iterable=None):
+    def __init__(self, start_position):
         """
         Creates a new path.
         Can take an iterable containing curves as an argument.
         """
-        if iterable is not None:
-            super().__init__(iterable)
-            if not all(isinstance(curve, Curve) for curve in self):
-                raise TypeError(
-                    "The iterable supplied must only contain "
-                    "instances of the class, or subclasses of the class Curve"
-                )
-        else:
-            super().__init__()
+        self._start_pos = start_position
+        super().__init__()
 
     def append(self, curve):
         """Appends curve at the end of path"""
@@ -51,6 +44,9 @@ class Path(list):
     @property
     def start_position(self):
         """Returns the start postition of the path"""
+        if len(self) == 0:
+            return self._start_pos
+
         return self[0].get_start_pos()
 
     @property
@@ -61,6 +57,9 @@ class Path(list):
     @property
     def end_position(self):
         """Returns the end position of the path"""
+        if len(self) == 0:
+            return self.start_position
+
         return self[-1].get_end_pos()
 
     @property

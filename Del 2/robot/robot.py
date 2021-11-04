@@ -63,7 +63,7 @@ class Robot:
         # Follows the curve
         self.drive_base.reset()
         while self.drive_base.distance() < curve.length() * self.scale:
-            t_param = curve.get_t(self.drive_base.distance)
+            t_param = curve.get_t(self.drive_base.distance() / self.scale)
             curve = curve.get_curvature(t_param)
             self.drive_base.drive(SPEED, math.degrees(SPEED * curve / self.scale))
 
@@ -77,7 +77,7 @@ class Robot:
         line = Line([self.pos, pos])
 
         # No change if line length is zero
-        if line.length() < 1e-5:
+        if line.length() > 1e-5:
             # Changes angle
             self.change_angle(line.get_start_angle())
 

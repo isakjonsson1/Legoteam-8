@@ -45,3 +45,10 @@ class Point:
 
     def __repr__(self):
         return f"{type(self).__name__}(x={self.x}, y={self.y})"
+
+    @classmethod
+    def from_list(cls, coordinates):
+        if len(coordinates) != 2:
+            raise ValueError("There can only be two coordinates in a point (x, y)")
+
+        return cls(coordinates[0], coordinates[1])
