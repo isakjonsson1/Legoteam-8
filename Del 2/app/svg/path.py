@@ -1,16 +1,18 @@
 """Contains the Path class"""
 from app.abc import Curve
+from app.point.point import Point
 from app.utils.curves import make_curve, make_curve_relative
 
 
 class Path(list):
     """Represents a path (list of curves)"""
 
-    def __init__(self, start_position):
+    def __init__(self, start_position=Point(0, 0)):
         """
         Creates a new path.
         Can take an iterable containing curves as an argument.
         """
+        assert isinstance(start_position, Point), "Start position must be a Point"
         self._start_pos = start_position
         super().__init__()
 
@@ -66,3 +68,12 @@ class Path(list):
     def end_angle(self):
         """Returns the end angle of the path"""
         return self[-1].get_end_angle()
+
+    @classmethod
+    def from_curves_list(cls, curves):
+        """Returns a path based on a list of curves"""
+        result = cls()
+        for curve in curves:
+            result.append(curve)
+
+        return result

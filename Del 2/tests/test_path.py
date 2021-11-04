@@ -25,7 +25,7 @@ curves = [
 
 
 def test_path_init():
-    path = Path(curves)
+    path = Path.from_curves_list(curves)
     assert len(path) == len(curves)
 
     assert len(Path()) == 0
@@ -35,13 +35,10 @@ def test_path_init():
 
 
 def test_path_start_end():
-    path = Path(curves)
+    path = Path.from_curves_list(curves)
 
     assert path.start_position == points[0]
     assert path.end_position == points[-1]
 
     assert path.start_angle == math.pi / 2
     assert path.end_angle == 0
-
-
-test_path_init()
