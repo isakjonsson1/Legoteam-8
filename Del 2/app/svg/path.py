@@ -12,7 +12,9 @@ class Path(list):
         Creates a new path.
         Can take an iterable containing curves as an argument.
         """
-        assert isinstance(start_position, Point), "Start position must be a Point"
+        if not isinstance(start_position, Point):
+            raise TypeError("Start position must be a Point")
+
         self._start_pos = start_position
         super().__init__()
 
