@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 # from config import *
 from app.point import Point
 from app.curves import Line
-from app.curves import NthDegreeCurve
 from app.svg.parsing import parse_svg
 from app.utils.plotting import plot_curve, plot_path
 

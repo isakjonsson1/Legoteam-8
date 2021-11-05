@@ -20,7 +20,6 @@ curves = [
     Line(points[:2]),
     QuadraticCurve(points[:3]),
     CubicCurve(points[:4]),
-    NthDegreeCurve(points),
 ]
 
 
