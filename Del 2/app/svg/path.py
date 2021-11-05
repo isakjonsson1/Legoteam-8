@@ -1,25 +1,22 @@
 """Contains the Path class"""
-from app.abc.curve import Curve
-from app.utils.plotting import plot_curve
+from app.abc import Curve
+from app.point.point import Point
+from app.utils.curves import make_curve
 
 
 class Path(list):
     """Represents a path (list of curves)"""
 
-    def __init__(self, iterable=None):
+    def __init__(self, start_position=Point(0, 0)):
         """
         Creates a new path.
         Can take an iterable containing curves as an argument.
         """
-        if iterable is not None:
-            super().__init__(iterable)
-            if not all(isinstance(curve, Curve) for curve in self):
-                raise TypeError(
-                    "The iterable supplied must only contain "
-                    "instances of the class, or subclasses of the class Curve"
-                )
-        else:
-            super().__init__()
+        if not isinstance(start_position, Point):
+            raise TypeError("Start position must be a Point")
+
+        self._start_pos = start_position
+        super().__init__()
 
     def append(self, curve):
         """Appends curve at the end of path"""
@@ -28,18 +25,27 @@ class Path(list):
 
         super().append(curve)
 
+    def append_curve(self, points, relative=False):
+        """
+        Appends a new curve based on the current endpoint
+        and a list of control points.
+
+        If relative is set to True, the curve is calculated using relative
+        positions of the points points[1:] using the first point (points[0]) as a base
+        """
+        curve = make_curve([self.end_position] + points, relative=relative)
+        self.append(curve)
+
     def length(self):
         """Returns the total length of the path"""
         return sum(map(lambda s: s.length(), self))
 
-    def plot_path(self):
-        """Plots the entire path"""
-        for curve in self:
-            plot_curve(curve)
-
     @property
     def start_position(self):
         """Returns the start postition of the path"""
+        if len(self) == 0:
+            return self._start_pos
+
         return self[0].get_start_pos()
 
     @property
@@ -50,9 +56,21 @@ class Path(list):
     @property
     def end_position(self):
         """Returns the end position of the path"""
+        if len(self) == 0:
+            return self.start_position
+
         return self[-1].get_end_pos()
 
     @property
     def end_angle(self):
         """Returns the end angle of the path"""
         return self[-1].get_end_angle()
+
+    @classmethod
+    def from_curves_list(cls, curves):
+        """Returns a path based on a list of curves"""
+        result = cls()
+        for curve in curves:
+            result.append(curve)
+
+        return result

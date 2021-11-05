@@ -3,6 +3,12 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 
+def plot_path(path):
+    """Plot a given path"""
+    for curve in path:
+        plot_curve(curve)
+
+
 def plot_curve(curve):
     """Plots a given curve"""
     t_values = np.linspace(0, 1)

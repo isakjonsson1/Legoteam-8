@@ -21,6 +21,5 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         cd "Del 2"
-        pylint run.py
-        pylint config.py
+        pylint robot
         pylint app
