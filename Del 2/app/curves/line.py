@@ -21,7 +21,7 @@ class Line(LinearCurve):
         """
         return (1 - t_param) * self.points[0] + t_param * self.points[1]
 
-    def get_vel(self, t_param=None):
+    def get_vel(self, t_param=None):  # pylint: disable=unused-argument
         """
         Returns the velocity at a given t value [0, 1] (the first order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
@@ -29,7 +29,7 @@ class Line(LinearCurve):
         """
         return self.points[1] - self.points[0]
 
-    def get_acc(self, t_param=None):
+    def get_acc(self, t_param=None):  # pylint: disable=unused-argument, no-self-use
         """
         Returns the acceleration at a given t value [0, 1] (the second order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
@@ -37,7 +37,15 @@ class Line(LinearCurve):
         """
         return Point(0, 0)
 
-    def get_curvature(self, t_param=None):
+    def get_curvature(
+        self, t_param=None
+    ):  # pylint: disable=unused-argument, no-self-use
+        """
+        Returns the curvature at a given t velue [0, 1]
+        where 0 is the start of the curve and 1 is the end of the curve.
+
+        Since this is a straight line, the curvature is always 0
+        """
         return 0
 
     def length(self):

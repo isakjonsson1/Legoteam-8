@@ -28,7 +28,7 @@ class NthDegreeCurve(NonLinearCurve):
 
         super().__init__(points, generate_lut=generate_lut)
 
-    def get_pos(self, t_param):
+    def get_pos(self, t_param):  # pylint disable=method-hidden
         """
         Returns a position on the curve based a t value [0, 1]
         where 0 is the start of the curve and 1 is the end of the curve.
@@ -37,7 +37,7 @@ class NthDegreeCurve(NonLinearCurve):
             t_param
         ) + t_param * self._subcurve1.get_pos(t_param)
 
-    def get_vel(self, t_param):
+    def get_vel(self, t_param):  # pylint disable=method-hidden
         """
         Returns the velocity at a given t value [0, 1] (the first order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
@@ -48,7 +48,7 @@ class NthDegreeCurve(NonLinearCurve):
             + t_param * self._subcurve1.get_vel(t_param)
         )
 
-    def get_acc(self, t_param):
+    def get_acc(self, t_param):  # pylint disable=method-hidden
         """
         Returns the acceleration at a given t value [0, 1] (the second order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
