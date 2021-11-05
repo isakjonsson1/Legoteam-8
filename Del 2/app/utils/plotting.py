@@ -22,3 +22,7 @@ def plot_curve(curve):
 def plot_point(point):
     """Plots a point"""
     plt.plot(point.x, point.y, marker="o")
+
+
+def show():
+    plt.show()

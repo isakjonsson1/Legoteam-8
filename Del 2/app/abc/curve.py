@@ -2,6 +2,8 @@
 from math import atan2
 from abc import ABC, abstractmethod
 
+from app.point import Point
+
 
 class Curve(ABC):
     """An abstract class for all curves"""
@@ -11,6 +13,9 @@ class Curve(ABC):
         Creates a Curve based on an arbitrary list of points.
         This is an abstract class and cannot be instanced by itself.
         """
+        if not all(map(lambda p: isinstance(p, Point), points)):
+            TypeError("The points needs to be defined using the class app.point.Point")
+
         self.points = points
 
     @abstractmethod

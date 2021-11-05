@@ -8,12 +8,11 @@ from app.point import Point
 from app.curves import Line
 from app.svg.parsing import parse_svg
 from app.utils.plotting import plot_curve, plot_path
-
 from app.svg import Path
 
 
 def main():
-    paths = parse_svg(r"app\svg\sample_svgs\smiley.svg")
+    paths = parse_svg(r"app\svg\sample_svgs\arc_test.svg")
     print(len(paths))
     for path in paths:
         plot_path(path)

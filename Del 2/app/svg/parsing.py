@@ -2,6 +2,7 @@
 import re
 
 from app.abc import Curve
+from app.arc.arc import Arc
 from app.point import Point
 from app.svg import Path
 
@@ -66,12 +67,13 @@ def _commands_to_paths(instuctions, inputs):
         "z",
     }
 
-    curves_dict = {
+    extract_dict = {
         "c": extract_points(3),
         "q": extract_points(2),
         "l": extract_points(1),
         "s": extract_smooth_points(2),
         "t": extract_smooth_points(1),
+        "a": extract_arc_data,
     }
 
     not_implemented = {
@@ -104,8 +106,14 @@ def _commands_to_paths(instuctions, inputs):
             path = Path(start_point)
 
         # Bezier curve
-        elif cmd_letter in curves_dict:
-            points_gen = curves_dict[cmd_letter]
+        elif cmd_letter in extract_dict:
+            points_gen = extract_dict[cmd_letter]
+
+            if cmd_letter == "a":
+                for data in points_gen(inp, path, relative):
+                    path.append(Arc(*data))
+                continue
+
             for points in points_gen(inp, path, relative):
                 path.append_curve(points)
 
@@ -209,6 +217,23 @@ def extract_smooth_points(number_of_points):
             ctr_point = 2 * exp_points[-1] - exp_points[-2]
 
     return generator
+
+
+def extract_arc_data(inp, path, relative):
+    start_pos = path.end_position
+    for i in range(0, len(inp), 7):
+        radii = Point(inp[i], inp[i + 1])
+        rotation = inp[i + 2]
+        large_arc = inp[i + 3]
+        sweep = inp[i + 4]
+        end_pos = Point(inp[i + 5], -inp[i + 6])
+        if relative:
+            end_pos += start_pos
+
+        points = [start_pos, radii, end_pos]
+        yield points, large_arc, sweep, rotation
+
+        start_pos = end_pos
 
 
 def _parse_command_input(command_input):
