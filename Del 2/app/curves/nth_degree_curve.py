@@ -2,8 +2,6 @@
 from app.abc import NonLinearCurve
 from app.curves import CubicCurve
 
-# pylint disable=method-hidden
-
 
 class NthDegreeCurve(NonLinearCurve):
     """Used to represent a Bézier Curve of nth degree where n > 4"""
