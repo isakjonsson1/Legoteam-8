@@ -1,7 +1,7 @@
 """Contains the Path class"""
 from app.abc import Curve
 from app.point.point import Point
-from app.utils.curves import make_curve, make_curve_relative
+from app.utils.curves import make_curve
 
 
 class Path(list):
@@ -25,20 +25,15 @@ class Path(list):
 
         super().append(curve)
 
-    def append_curve(self, points):
+    def append_curve(self, points, relative=False):
         """
         Appends a new curve based on the current endpoint
-        and a list of control points
-        """
-        curve = make_curve([self.end_position] + points)
-        self.append(curve)
+        and a list of control points.
 
-    def append_curve_relative(self, points):
+        If relative is set to True, the curve is calculated using relative
+        positions of the points points[1:] using the first point (points[0]) as a base
         """
-        Appends a new curve based on the current endpoint
-        and a list of control points relative to it
-        """
-        curve = make_curve_relative([self.end_position] + points)
+        curve = make_curve([self.end_position] + points, relative=relative)
         self.append(curve)
 
     def length(self):
