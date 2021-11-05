@@ -19,6 +19,7 @@ class NthDegreeCurve(NonLinearCurve):
 
         # Re-assigns functions to not be reccursive if the curve is cubic
         if len(points) == 4:
+            # pylint disable=method-hidden
             curve = CubicCurve(points, generate_lut=False)
             self.get_pos = curve.get_pos
             self.get_vel = curve.get_vel

@@ -38,7 +38,7 @@ class QuadraticCurve(NonLinearCurve):
             - 2 * (1 - t_param) * self.compund_point_b
         )
 
-    def get_acc(self, t_param=None):
+    def get_acc(self, t_param=None):  # pylint: disable=unused-argument
         """
         Returns the acceleration at a given t value [0, 1] (the second order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
