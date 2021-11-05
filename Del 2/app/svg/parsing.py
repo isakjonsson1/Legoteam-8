@@ -1,6 +1,5 @@
 """functions related to parsing a .svg file"""
 import re
-from itertools import chain
 
 from app.abc import Curve
 from app.point import Point
@@ -8,8 +7,9 @@ from app.svg import Path
 
 
 def parse_svg(svg_file_name):
-    commands = _commands_from_svg(svg_file_name)
-    return _commands_to_paths(commands)
+    """Parses an svg file and returns a list of paths in the svg"""
+    instructions, inputs = _commands_from_svg(svg_file_name)
+    return _commands_to_paths(instructions, inputs)
 
 
 def _commands_from_svg(svg_file_name):
@@ -19,7 +19,7 @@ def _commands_from_svg(svg_file_name):
     Ex: ['M', '16-0.034', 'C', '7.1-0-0.03,7.1-0.03,16',
     'S', '7.1,32.03,16,32.03']
     """
-    with open(svg_file_name, "r") as file:
+    with open(svg_file_name, "r", encoding="utf-8") as file:
         text = file.read().replace("\n", "")
     file.close()
 
@@ -28,7 +28,7 @@ def _commands_from_svg(svg_file_name):
     matches = re.findall(regex, text)
 
     # Slits at every command-letter (command-letter is retained)
-    commands = []
+    paths = []
 
     # Separates the data based on instructions.
     # Lower case means relative instructions, while uppercase means absolute
@@ -39,21 +39,26 @@ def _commands_from_svg(svg_file_name):
     # [A, a]: Eliptical arcs
     # https://www.w3.org/TR/SVG/paths.html#PathData
     for match in matches:
-        commands.append(re.split("([cCsSqQtTlLaAvVhHmMzZ])", match))
+        paths.append(re.split("([cCsSqQtTlLaAvVhHmMzZ])", match))
 
-    # Removes first element of every list of command chain (it's empty)
-    for k in range(len(commands)):
-        del commands[k][0]
-        for l in range(len(commands[k])):
-            commands[k][l] = (commands[k][l]).strip()
+    # Removes first element of every list of command chain (path) (it's empty)
+    # Removes whitespace from command
+    # Flattens the list
+    flat = [cmd.strip() for path in paths for cmd in path[1:]]
 
-    # Flatten commands and returns
-    return list(chain.from_iterable(commands))
+    # Splits into instructions and inputs
+    instructions = list(flat[::2])
+    inputs = list(flat[1::2])
+    return instructions, inputs
 
 
-def _commands_to_paths(commands):
+def _commands_to_paths(instuctions, inputs):
+    # assert that the first instruction is a moveto
+    if instuctions[0].lower() != "m":
+        raise ValueError("The first instruction needs to be a moveto")
+
     # Inizialize path
-    inp = _parse_command_input(commands[1])
+    inp = _parse_command_input(inputs[0])
     path = Path(Point(inp[0], -inp[1]))
 
     movement = {
@@ -76,9 +81,9 @@ def _commands_to_paths(commands):
     }
 
     paths = []
-    for i in range(2, len(commands), 2):
-        cmd_letter = commands[i].lower()
-        relative = cmd_letter == commands[i]
+    for command, raw_input in zip(instuctions, inputs):
+        cmd_letter = command.lower()
+        relative = cmd_letter == command
 
         # Close path
         if cmd_letter == "z":
@@ -87,7 +92,7 @@ def _commands_to_paths(commands):
             continue
 
         # Command input
-        inp = _parse_command_input(commands[i + 1])
+        inp = _parse_command_input(raw_input)
 
         # Move to
         if cmd_letter in movement:
@@ -106,11 +111,11 @@ def _commands_to_paths(commands):
 
         # Not implemented
         elif cmd_letter in not_implemented:
-            raise NotImplementedError(f"Instruction not implemented ['{commands[i]}']")
+            raise NotImplementedError(f"Instruction not implemented ['{command}']")
 
         # Not recognized
         else:
-            raise ValueError(f"Instruction not recognized ['{commands[i]}']")
+            raise ValueError(f"Instruction not recognized ['{command}']")
 
     return paths
 
