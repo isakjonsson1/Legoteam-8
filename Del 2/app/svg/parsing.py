@@ -56,6 +56,25 @@ def _commands_to_paths(commands):
     inp = _parse_command_input(commands[1])
     path = Path(Point(inp[0], -inp[1]))
 
+    movement = {
+        "m",
+        "z",
+    }
+
+    curves_dict = {
+        "c": extract_points(3),
+        "q": extract_points(2),
+        "l": extract_points(1),
+        "s": extract_smooth_points(2),
+        "t": extract_smooth_points(1),
+    }
+
+    not_implemented = {
+        "a",
+        "h",
+        "v",
+    }
+
     paths = []
     for i in range(2, len(commands), 2):
         cmd_letter = commands[i].lower()
@@ -71,7 +90,7 @@ def _commands_to_paths(commands):
         inp = _parse_command_input(commands[i + 1])
 
         # Move to
-        if cmd_letter == "m":
+        if cmd_letter in movement:
             if len(path) != 0:
                 paths.append(path)
             start_point = Point(inp[0], -inp[1])
@@ -79,95 +98,112 @@ def _commands_to_paths(commands):
                 start_point += path.end_position
             path = Path(start_point)
 
-        # Cubic bezier
-        elif cmd_letter == "c":
-            for j in range(0, len(inp), 6):
-                points = [Point(inp[k], -inp[k + 1]) for k in range(j, j + 6, 2)]
-                path.append_curve(points, relative=relative)
-
-        # "Smooth" cubic bezier
-        elif cmd_letter == "s":
-
-            # If last curve was a cubic bezier curve
-            if commands[i - 2].lower() in ("c", "s"):
-                # Sets first control point
-                abs_ctr_point = 2 * path.end_position - path[-1].points[2]
-            else:
-                # Control point is starting point
-                abs_ctr_point = path.end_position
-
-            # Loops through command input one curve at a time
-            for j in range(0, len(inp), 4):
-                # Convert command input to points
-                inp_points = [Point(inp[k], -inp[k + 1]) for k in range(j, j + 4, 2)]
-
-                # Converts to absulute points if input is relative
-                if relative:
-                    inp_points = Curve.convert_rel_points_to_abs_points(
-                        path.end_position, inp_points
-                    )[1:]
-
-                # Append points to curve
-                path.append_curve([abs_ctr_point] + inp_points)
-
-                # Updates control point
-                abs_ctr_point = 2 * path.end_position - path[-1].points[2]
-
-        # Quadratic bezier
-        elif cmd_letter == "q":
-            for j in range(0, len(inp), 4):
-                points = [Point(inp[k], -inp[k + 1]) for k in range(j, j + 4, 2)]
-                path.append_curve(points, relative=relative)
-
-        # "Smooth" quadratic bezier
-        elif cmd_letter == "t":
-            # If last curve was a quadratic bezier curve
-            if commands[i - 2].lower() in ("q", "t"):
-                # Sets first control point
-                abs_ctr_point = 2 * path.end_position - path[-1].points[2]
-            else:
-                # Control point is starting point
-                abs_ctr_point = path.end_position
-
-            # Loops through command input one curve at a time
-            for j in range(0, len(inp), 2):
-                # Convert command input to points
-                inp_point = Point(inp[j], -inp[j + 1])
-
-                # Converts to absulute points if input is relative
-                if relative:
-                    inp_point += path.end_position
-
-                # Append points to curve
-                path.append_curve([abs_ctr_point, inp_point])
-
-                # Updates control point
-                abs_ctr_point = 2 * path.end_position - path[-1].points[2]
-
-        # Line
-        elif cmd_letter == "l":
-            for j in range(0, len(inp), 2):
-                point = Point(inp[j], -inp[j + 1])
-                path.append_curve([point], relative=relative)
+        # Bezier curve
+        elif cmd_letter in curves_dict:
+            points_gen = curves_dict[cmd_letter]
+            for points in points_gen(inp, path, relative):
+                path.append_curve(points)
 
         # Not implemented
-        elif cmd_letter in ("h", "v", "a"):
+        elif cmd_letter in not_implemented:
             raise NotImplementedError(f"Instruction not implemented ['{commands[i]}']")
 
-        # Not regognized
+        # Not recognized
         else:
             raise ValueError(f"Instruction not recognized ['{commands[i]}']")
 
     return paths
 
 
-# def extract_curve_points(number_of_points):
-#     if number_of_points >= 1:
-#         ValueError("Number of points per curve must be equal or greater than 1")
+def extract_points(number_of_points):
+    """
+    Returns a generator for the points needed to construct a bezier curve.
+    The start position is always implicitly defined as the endposition as
+    the previous curve, so for any nth degree bezier curve, number_of_points
+    should be n.
+    """
+    if number_of_points < 1:
+        ValueError("Number of points per curve must be equal or greater than 1")
 
-#     def generator(inp):
-#         for i in range(0, len(inp), number_of_points * 2):
-#             yield [Point(inp[i], inp[i + 1]) for k in range(i, i + 6, 2)]
+    def generator(inp, path, relative):
+        """
+        Returns points needed to construct a curve.
+
+        --Params--
+        :param inp: A list of input numbers that gets turned into points.
+        :param path: The current path that the curve edventually get appended to
+        :param relative: Bool variable to signify that the points are meant to be
+                         interpereted relatively.
+        """
+        # Start is the end_position of the previous curve
+        start = path.end_position
+
+        # A point consists of two numbers
+        num_count = number_of_points * 2
+
+        # If there are 12 numbers and the curve is defiend by 3 points,
+        # The first i is 0 and the second i is 6. This makes is easy to
+        # fetch any number of points at the same time. Each loop is a new
+        # curve
+        for i in range(0, len(inp), num_count):
+            # The points for this curve
+            points = [Point(inp[j], -inp[j + 1]) for j in range(i, i + num_count, 2)]
+
+            # adds start point and updates it if relative
+            if relative:
+                points = [point + start for point in points]
+                start = points[-1]
+
+            yield points
+
+    return generator
+
+
+def extract_smooth_points(number_of_points):
+    """
+    Returns a generator for the points needed to construct a bezier curve.
+
+    For a smooth curve, the first control point in this generator is implicitly
+    defined as the reflection of the last control point, so the first control point
+    should not be explicitly given.
+
+    The start position is always implicitly defined as the endposition as
+    the previous curve, so for any nth degree bezier curve, number_of_points
+    should be n - 1.
+    """
+    # To be used to extract the explicit points
+    _extract_points = extract_points(number_of_points)
+
+    def generator(inp, path, relative):
+        """
+        Returns points needed to construct a curve.
+
+        --Params--
+        :param inp: A list of input numbers that gets turned into points.
+        :param path: The current path that the curve edventually get appended to
+        :param relative: Bool variable to signify that the points are meant to be
+                         interpereted relatively.
+        """
+        # Gets the explicitly given points
+        explicit_points_generator = _extract_points(inp, path, relative)
+
+        start = path.end_position
+
+        # Last curve was not a bezier curve of the same order as this one
+        if number_of_points != len(path[-1].points) - 2 or not isinstance(
+            path[-1], Curve
+        ):
+            ctr_point = start
+        else:
+            ctr_point = 2 * start - path[-1].points[2]
+
+        for exp_points in explicit_points_generator:
+            yield [ctr_point] + exp_points
+
+            # Updates the control point
+            ctr_point = 2 * exp_points[-1] - exp_points[-2]
+
+    return generator
 
 
 def _parse_command_input(command_input):
