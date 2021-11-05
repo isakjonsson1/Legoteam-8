@@ -14,6 +14,10 @@ class Line(LinearCurve):
             raise ValueError("A line is only defined between two points")
         super().__init__(points)
 
+    def length(self):
+        """Returns the total length of the curve"""
+        return abs(self.points[1] - self.points[0])
+
     def get_pos(self, t_param):
         """
         Returns the position at a given t value [0, 1]
@@ -21,7 +25,9 @@ class Line(LinearCurve):
         """
         return (1 - t_param) * self.points[0] + t_param * self.points[1]
 
-    def get_vel(self, t_param=None):  # pylint: disable=unused-argument
+    # pylint: disable=unused-argument
+
+    def get_vel(self, t_param=None):
         """
         Returns the velocity at a given t value [0, 1] (the first order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
@@ -29,7 +35,9 @@ class Line(LinearCurve):
         """
         return self.points[1] - self.points[0]
 
-    def get_acc(self, t_param=None):  # pylint: disable=unused-argument, no-self-use
+    # pylint: disable=no-self-use
+
+    def get_acc(self, t_param=None):
         """
         Returns the acceleration at a given t value [0, 1] (the second order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
@@ -37,9 +45,7 @@ class Line(LinearCurve):
         """
         return Point(0, 0)
 
-    def get_curvature(
-        self, t_param=None
-    ):  # pylint: disable=unused-argument, no-self-use
+    def get_curvature(self, t_param=None):
         """
         Returns the curvature at a given t velue [0, 1]
         where 0 is the start of the curve and 1 is the end of the curve.
@@ -47,7 +53,3 @@ class Line(LinearCurve):
         Since this is a straight line, the curvature is always 0
         """
         return 0
-
-    def length(self):
-        """Returns the total length of the curve"""
-        return abs(self.points[1] - self.points[0])
