@@ -6,6 +6,7 @@ from app.curves import CubicCurve
 class NthDegreeCurve(NonLinearCurve):
     """Used to represent a Bézier Curve of nth degree where n > 4"""
 
+    # pylint disable=method-hidden
     def __init__(self, points, generate_lut=True):
         """
         Creates a Bézier Curve in the nth degree based on n absolute points.
@@ -28,7 +29,6 @@ class NthDegreeCurve(NonLinearCurve):
 
         super().__init__(points, generate_lut=generate_lut)
 
-    # pylint disable=method-hidden
     def get_pos(self, t_param):
         """
         Returns a position on the curve based a t value [0, 1]
