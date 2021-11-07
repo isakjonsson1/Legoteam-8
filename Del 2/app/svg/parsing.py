@@ -53,7 +53,7 @@ def _commands_from_svg(svg_file_name):
     return instructions, inputs
 
 
-def _commands_to_paths(  # pylint disable=too-many-locals, too-many-branches
+def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
     instuctions, inputs
 ):
     # assert that the first instruction is a moveto
