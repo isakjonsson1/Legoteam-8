@@ -53,16 +53,6 @@ def test_quadratic_curve():
     _test_curve(c)
 
 
-def test_nth_degree_curve():
-    """Tests the NthDegreeCurve class"""
-    c = NthDegreeCurve(points)
-
-    with pytest.raises(ValueError):
-        NthDegreeCurve(points[:3])
-
-    _test_curve(c)
-
-
 def _test_curve(curve):
     """Tests any curve"""
     assert curve.length() > 0
