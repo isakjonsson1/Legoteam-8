@@ -5,7 +5,6 @@ import pytest
 from app.abc.non_linear_curve import NonLinearCurve
 from app.curves import Line
 from app.curves import QuadraticCurve
-from app.curves import NthDegreeCurve
 from app.curves.cubic_curve import CubicCurve
 from app.point import Point
 
