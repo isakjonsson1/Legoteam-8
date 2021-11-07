@@ -46,3 +46,7 @@ def test_path_start_end():
 
     plotting.plot_path(path)
     plotting.show()
+    plotting.plot_curve(
+        Arc([Point(110, 215), Point(30, 50), Point(162.55, 162.45)], 0, 1, 0)
+    )
+    plotting.show()

@@ -7,7 +7,14 @@ from app.point.point import Point
 class Arc(NonLinearCurve):
     """Represents a eliptical arc"""
 
-    def __init__(self, points, large_arc, sweep, rotation=0, generate_lut=True):
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        points,
+        large_arc,
+        sweep,
+        rotation=0,
+        generate_lut=True,
+    ):
         """Defines an arc based on the parameters passed
 
         --Params--
@@ -22,26 +29,25 @@ class Arc(NonLinearCurve):
         """
         self.large_arc = large_arc
         self.sweep = sweep
-        self.rotation = rotation
+        self.rotation = -math.radians(rotation)
 
         if len(points) != 3:
             raise ValueError(
                 "The number of points given must equal 3 [start_pos, radii, end_pos]"
             )
 
-        self.radii = points[1]
-
-        center_helper, helper = self.calc_helpers(
+        helper = self.calc_helper(
             start_pos=points[0],
             end_pos=points[2],
-            rotation=rotation,
-            radii=points[1],
-            large_arc=large_arc,
-            sweep=sweep,
+            rotation=self.rotation,
         )
 
+        self.radii = self.correct_radii(points[1], helper)
+
+        center_helper = self.calc_center_helper(helper, self.radii, large_arc, sweep)
+
         self.center = self.calc_center(
-            center_helper, rotation, staring_pos=points[0], end_pos=points[-1]
+            center_helper, self.rotation, staring_pos=points[0], end_pos=points[-1]
         )
 
         self._start_angle = self.calc_start_angle(helper, center_helper, self.radii)
@@ -79,29 +85,56 @@ class Arc(NonLinearCurve):
         return point.rotated(self.rotation)
 
     @staticmethod
-    def calc_helpers(start_pos, end_pos, rotation, radii, large_arc, sweep):
+    def calc_helper(start_pos, end_pos, rotation):
         """
-        Calculates the center_helper point based on the given params.
+        Calculates the helper point based on the given params.
         See https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
         for explanation
         """
         helper = ((start_pos - end_pos) * 0.5).rotated(-rotation)
-        center_helper = math.sqrt(
-            (
-                (radii.x * radii.y) ** 2
-                - (radii.x * helper.y) ** 2
-                - (radii.y * helper.x) ** 2
+        return helper
+
+    @staticmethod
+    def correct_radii(radii, helper):
+        """
+        Returns a corrected radii based on the original radii and helper.
+        See https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
+        for explanation
+        """
+        big_lambda = (helper.x / radii.x) ** 2 + (helper.y / radii.y) ** 2
+
+        result = Point(radii.x, radii.y)
+        if big_lambda > 1:
+            result *= math.sqrt(big_lambda)
+
+        return result
+
+    @staticmethod
+    def calc_center_helper(helper, radii, large_arc, sweep):
+        """
+        Calculates the center_helper based on the given params.
+        See https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
+        for explanation
+        """
+        try:
+            center_helper = math.sqrt(
+                (
+                    (radii.x * radii.y) ** 2
+                    - (radii.x * helper.y) ** 2
+                    - (radii.y * helper.x) ** 2
+                )
+                / ((radii.x * helper.y) ** 2 + (radii.y * helper.x) ** 2)
+            ) * Point(
+                radii.x * helper.y / radii.y,
+                -radii.y * helper.x / radii.x,
             )
-            / ((radii.x * helper.y) ** 2 + (radii.y * helper.x) ** 2)
-        ) * Point(
-            radii.x * helper.y / radii.y,
-            radii.y * helper.x / radii.x,
-        )
+        except ValueError:  # sqr of something negative
+            center_helper = Point(0, 0)
 
         if large_arc == sweep:
             center_helper *= -1
 
-        return center_helper, helper
+        return center_helper
 
     @staticmethod
     def calc_center(center_helper, rotation, staring_pos, end_pos):
@@ -110,7 +143,7 @@ class Arc(NonLinearCurve):
         See https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
         for explanation
         """
-        return center_helper.rotated(rotation) + (end_pos - staring_pos) * 0.5
+        return center_helper.rotated(rotation) + (staring_pos + end_pos) * 0.5
 
     @staticmethod
     def calc_start_angle(helper, center_helper, radii):
@@ -141,7 +174,7 @@ class Arc(NonLinearCurve):
 
         angle_delta = Point.angle_between(point1, point2) % math.tau
 
-        if not sweep:
+        if sweep:
             angle_delta -= math.tau
 
         return angle_delta

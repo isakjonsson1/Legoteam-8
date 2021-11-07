@@ -25,4 +25,5 @@ def plot_point(point):
 
 
 def show():
+    """Reveals all drawn plots by calling mathplotlib.pyplot.show()"""
     plt.show()
