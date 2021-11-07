@@ -1,5 +1,5 @@
 """Contains the class Point"""
-from math import sqrt
+import math
 
 
 class Point:
@@ -8,6 +8,17 @@ class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def rotated(self, angle):
+        """Returns a rotated (around origo) version of the point"""
+        rotation = complex(math.cos(angle), math.sin(angle))
+        imag_point = complex(self.x, self.y)
+        imag_point *= rotation
+        return Point(imag_point.real, imag_point.imag)
+
+    def length(self):
+        """Returns the distance from origo to the point"""
+        return math.sqrt(self.x ** 2 + self.y ** 2)
 
     def __add__(self, other):
         if isinstance(other, self.__class__):
@@ -38,10 +49,25 @@ class Point:
         return self.x == other.x and self.y == other.y
 
     def __abs__(self):
-        return sqrt(self.x ** 2 + self.y ** 2)
+        return math.sqrt(self.x ** 2 + self.y ** 2)
+
+    def __neg__(self):
+        return self * -1
 
     def __str__(self):
         return f"({self.x}, {self.y})"
 
     def __repr__(self):
         return f"{type(self).__name__}(x={self.x}, y={self.y})"
+
+    @staticmethod
+    def angle_between(point1, point2):
+        """Returns the angle between two vectors from origo to the given points"""
+        dot_prod = point1.x * point2.x + point1.y * point2.y
+        angle = math.acos(dot_prod / (point1.length() * point2.length()))
+
+        # Account for the positions of the point
+        if point1.y * point2.x > point1.x * point2.y:
+            angle *= -1
+
+        return angle

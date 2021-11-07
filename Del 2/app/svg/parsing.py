@@ -2,6 +2,7 @@
 import re
 
 from app.abc import Curve
+from app.arc.arc import Arc
 from app.point import Point
 from app.svg import Path
 
@@ -14,7 +15,7 @@ def parse_svg(svg_file_name):
 
 def _commands_from_svg(svg_file_name):
     """
-    Returns a list of commands and command inputs form an svg file.
+    Returns a list of instructions and a list of inputs form an svg file.
 
     Ex: ['M', '16-0.034', 'C', '7.1-0-0.03,7.1-0.03,16',
     'S', '7.1,32.03,16,32.03']
@@ -52,26 +53,25 @@ def _commands_from_svg(svg_file_name):
     return instructions, inputs
 
 
-def _commands_to_paths(instuctions, inputs):
+def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
+    instuctions, inputs
+):
     # assert that the first instruction is a moveto
     if instuctions[0].lower() != "m":
         raise ValueError("The first instruction needs to be a moveto")
-
-    # Inizialize path
-    inp = _parse_command_input(inputs[0])
-    path = Path(Point(inp[0], -inp[1]))
 
     movement = {
         "m",
         "z",
     }
 
-    curves_dict = {
+    extract_dict = {
         "c": extract_points(3),
         "q": extract_points(2),
         "l": extract_points(1),
         "s": extract_smooth_points(2),
         "t": extract_smooth_points(1),
+        "a": extract_arc_data,
     }
 
     not_implemented = {
@@ -80,42 +80,59 @@ def _commands_to_paths(instuctions, inputs):
         "v",
     }
 
+    path = Path()
     paths = []
     for command, raw_input in zip(instuctions, inputs):
         cmd_letter = command.lower()
         relative = cmd_letter == command
-
-        # Close path
-        if cmd_letter == "z":
-            paths.append(path)
-            path = Path(path.start_position)
-            continue
-
-        # Command input
         inp = _parse_command_input(raw_input)
 
-        # Move to
         if cmd_letter in movement:
+            # Close path
+            if cmd_letter == "z":
+                # Line to start
+                path.append_curve([path.start_position])
+                start_point = path.start_position
+
+            # Move to
+            elif cmd_letter == "m":
+                start_point = Point(inp[0], -inp[1])
+                if relative:
+                    start_point += path.end_position
+
             if len(path) != 0:
                 paths.append(path)
-            start_point = Point(inp[0], -inp[1])
-            if relative:
-                start_point += path.end_position
+
+            # Starts new subpath
             path = Path(start_point)
 
-        # Bezier curve
-        elif cmd_letter in curves_dict:
-            points_gen = curves_dict[cmd_letter]
+            continue
+
+        # Curve
+        if cmd_letter in extract_dict:
+            points_gen = extract_dict[cmd_letter]
+
+            # Eliptic arc
+            if cmd_letter == "a":
+                for data in points_gen(inp, path, relative):
+                    path.append(Arc(*data))
+                continue
+
+            # Bezier
             for points in points_gen(inp, path, relative):
                 path.append_curve(points)
 
+            continue
+
         # Not implemented
-        elif cmd_letter in not_implemented:
+        if cmd_letter in not_implemented:
             raise NotImplementedError(f"Instruction not implemented ['{command}']")
 
         # Not recognized
-        else:
-            raise ValueError(f"Instruction not recognized ['{command}']")
+        raise ValueError(f"Instruction not recognized ['{command}']")
+
+    if len(path) != 0:
+        paths.append(path)
 
     return paths
 
@@ -211,8 +228,37 @@ def extract_smooth_points(number_of_points):
     return generator
 
 
+def extract_arc_data(inp, path, relative):
+    """Returns the arc data needed to construct an eliptic arc
+
+    --Params--
+    :param inp: A list of input numbers that gets turned into points.
+    :param path: The current path that the curve edventually get appended to
+    :param relative: Bool variable to signify that the points are meant to be
+                     interpereted relatively.
+    """
+    start_pos = path.end_position
+    for i in range(0, len(inp), 7):
+        radii = Point(inp[i], inp[i + 1])
+        rotation = inp[i + 2]
+        large_arc = inp[i + 3]
+        sweep = inp[i + 4]
+        end_pos = Point(inp[i + 5], -inp[i + 6])
+        if relative:
+            end_pos += start_pos
+
+        points = [start_pos, radii, end_pos]
+        yield points, large_arc, sweep, rotation
+
+        start_pos = end_pos
+
+
 def _parse_command_input(command_input):
+    """Parses command inputs and returns a list of floats"""
     # Finds a number
     pattern = r"\-?\.?(?:(?:(?<=\.)\d+)|(?:(?<!\.)\d+(?:\.?\d+)?))"
     result = re.findall(pattern, command_input)
+    if len(result) == 0:
+        return []
+
     return [float(num) for num in result]
