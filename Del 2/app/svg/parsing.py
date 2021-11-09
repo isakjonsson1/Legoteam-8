@@ -132,10 +132,10 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
 
         # Not implemented
         if cmd_letter in not_implemented:
-            raise NotImplementedError(f"Instruction not implemented ['{command}']")
+            raise NotImplementedError("Instruction not implemented ['{}']".format(command))
 
         # Not recognized
-        raise ValueError(f"Instruction not recognized ['{command}']")
+        raise ValueError("Instruction not recognized ['{}']".format(command))
 
     if len(path) != 0:
         paths.append(path)

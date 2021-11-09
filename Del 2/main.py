@@ -1,3 +1,4 @@
+#!/usr/bin/env pybricks-micropython
 """Entrypoint file"""
 import sys
 import os

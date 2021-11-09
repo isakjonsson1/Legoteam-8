@@ -25,7 +25,7 @@ class Point:
             return self.__class__(self.x + other.x, self.y + other.y)
 
         raise TypeError(
-            f"unsupported operand type(s) for +: '{self.__class__}' and '{type(other)}'"
+            "unsupported operand type(s) for +: '{}' and '{type(other)}'".format(self.__class__)
         )
 
     def __sub__(self, other):
@@ -36,7 +36,7 @@ class Point:
             return self.__class__(self.x * other, self.y * other)
 
         raise TypeError(
-            f"unsupported operand type(s) for *: '{self.__class__}' and '{type(other)}'"
+            "unsupported operand type(s) for *: '{}' and '{}'".format(self.__class__, type(other))
         )
 
     def __rmul__(self, other):
@@ -55,10 +55,10 @@ class Point:
         return self * -1
 
     def __str__(self):
-        return f"({self.x}, {self.y})"
+        return "({}, {})".format(self.x, self.y)
 
     def __repr__(self):
-        return f"{type(self).__name__}(x={self.x}, y={self.y})"
+        return "{}(x={}, y={})".format(type(self).__name__, self.x, self.y)
 
     @staticmethod
     def angle_between(point1, point2):
