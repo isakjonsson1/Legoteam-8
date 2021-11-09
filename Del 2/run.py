@@ -10,7 +10,9 @@ from robot.config import DRAWING_LEN
 
 def main():
     """Program entrypoint - Here comes the main logic"""
-    paths = parse_svg(os.path.join("app", "svg", "sample_svgs", "Mediamodifier-Design.svg"))
+    paths = parse_svg(
+        os.path.join("app", "svg", "sample_svgs", "Mediamodifier-Design.svg")
+    )
 
     # Finds min position of the paths
     min_x = min(path.min_position.x for path in paths)
@@ -22,7 +24,7 @@ def main():
 
     robot = Robot(
         offset=-Point(min_x, min_y),
-        scale=DRAWING_LEN / max(max_x-min_x, max_y-min_y),
+        scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
     )
 
     for path in paths:
@@ -52,15 +54,16 @@ def plot():
         for path in svgs[i]:
             plot_square.set_title(names[i])
             plotting.plot_path(path, plot_square)
-            
+
     plotting.show()
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "test":
         import pytest
 
         sys.exit(pytest.main(["-x", "tests"]))
-        
+
     if len(sys.argv) > 1 and sys.argv[1] == "plot":
         plot()
         exit()

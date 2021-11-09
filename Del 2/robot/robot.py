@@ -40,8 +40,8 @@ class Robot:
         self.pos = start_pos
         self.drive_base = _drive_base
         self.pen_motor = _pen_motor
-        
-        self.pen_state=True
+
+        self.pen_state = True
         self.lift_pen()
 
     def lift_pen(self):
@@ -55,7 +55,7 @@ class Robot:
         """Puts the pen on the paper"""
         if not self.pen_state:
             self.pen_motor.run_target(-360, 0, then=Stop.HOLD, wait=True)
-        
+
         self.pen_state = True
 
     def drive_through_path(self, path, drawing=True):
@@ -74,20 +74,19 @@ class Robot:
 
         if drawing:
             self.engage_pen()
-            
+
         # Follows the curve
         self.drive_base.reset()
         while (
-            self.drive_base.distance() is None and curve.length() != 0 or
-            self.drive_base.distance() < curve.length() * self.scale
-        ):
+            self.drive_base.distance() is None and curve.length() != 0
+        ) or self.drive_base.distance() < curve.length() * self.scale:
             distance = self.drive_base.distance()
             if distance is None:
                 distance = 0
 
             t_param = curve.get_t(distance / self.scale)
-            curve = curve.get_curvature(t_param)
-            self.drive_base.drive(SPEED, math.degrees(SPEED * curve / self.scale))
+            curvature = curve.get_curvature(t_param)
+            self.drive_base.drive(SPEED, math.degrees(SPEED * curvature / self.scale))
 
         # Updates params
         self.angle = curve.get_end_angle()
