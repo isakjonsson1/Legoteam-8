@@ -5,7 +5,7 @@ from app.abc import Curve
 from app.arc.arc import Arc
 from app.point import Point
 from app.svg import Path
-
+from app.utils.logging import time_function_log
 
 def parse_svg(svg_file_name):
     """Parses an svg file and returns a list of paths in the svg"""
@@ -25,11 +25,11 @@ def _commands_from_svg(svg_file_name):
     """
     with open(svg_file_name, "r", encoding="utf-8") as file:
         text = file.read().replace("\n", "")
-    file.close()
+
 
     # match paths
     regex = r"(?<=\bd=\").*?(?=\")"
-    matches = re.findall(regex, text)
+    matches = time_function_log(re.findall, regex, text)
 
     # Slits at every command-letter (command-letter is retained)
     paths = []
@@ -42,8 +42,11 @@ def _commands_from_svg(svg_file_name):
     # [L, l, H, h, V, v]: Lines
     # [A, a]: Eliptical arcs
     # https://www.w3.org/TR/SVG/paths.html#PathData
-    for match in matches:
-        paths.append(re.split("([cCsSqQtTlLaAvVhHmMzZ])", match))
+    def append_matches():
+        for match in matches:
+            paths.append(re.split("([cCsSqQtTlLaAvVhHmMzZ])", match))
+
+    time_function_log(append_matches)
 
     # Removes first element of every list of command chain (path) (it's empty)
     # Removes whitespace from command
@@ -84,58 +87,61 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
 
     path = Path()
     paths = []
-    for command, raw_input in zip(instuctions, inputs):
-        cmd_letter = command.lower()
-        relative = cmd_letter == command
-        inp = _parse_command_input(raw_input)
+    def process_paths():
+        for command, raw_input in zip(instuctions, inputs):
+            cmd_letter = command.lower()
+            relative = cmd_letter == command
+            inp = _parse_command_input(raw_input)
 
-        if cmd_letter in movement:
-            # Close path
-            if cmd_letter == "z":
-                # Line to start
-                path.append_curve([path.start_position])
-                start_point = path.start_position
-
-            # Move to
-            elif cmd_letter == "m":
-                start_point = Point(inp[0], -inp[1])
-                # implicit lineto
-                if len(inp) > 2:
-                    cmd_letter = "l"
-                    inp = inp[2:]
-
-            if len(path) != 0:
-                paths.append(path)
-
-            # Starts new subpath
-            path = Path(start_point)
-
-            # No implicit lineto
             if cmd_letter in movement:
+                # Close path
+                if cmd_letter == "z":
+                    # Line to start
+                    path.append_curve([path.start_position])
+                    start_point = path.start_position
+
+                # Move to
+                elif cmd_letter == "m":
+                    start_point = Point(inp[0], -inp[1])
+                    # implicit lineto
+                    if len(inp) > 2:
+                        cmd_letter = "l"
+                        inp = inp[2:]
+
+                if len(path) != 0:
+                    paths.append(path)
+
+                # Starts new subpath
+                path = Path(start_point)
+
+                # No implicit lineto
+                if cmd_letter in movement:
+                    continue
+
+            # Curve
+            if cmd_letter in extract_dict:
+                points_gen = extract_dict[cmd_letter]
+
+                # Eliptic arc
+                if cmd_letter == "a":
+                    for data in points_gen(inp, path, relative):
+                        path.append(Arc(*data))
+                    continue
+
+                # Bezier
+                for points in points_gen(inp, path, relative):
+                    path.append_curve(points)
+
                 continue
 
-        # Curve
-        if cmd_letter in extract_dict:
-            points_gen = extract_dict[cmd_letter]
+            # Not implemented
+            if cmd_letter in not_implemented:
+                raise NotImplementedError("Instruction not implemented ['{}']".format(command))
 
-            # Eliptic arc
-            if cmd_letter == "a":
-                for data in points_gen(inp, path, relative):
-                    path.append(Arc(*data))
-                continue
+            # Not recognized
+            raise ValueError("Instruction not recognized ['{}']".format(command))
 
-            # Bezier
-            for points in points_gen(inp, path, relative):
-                path.append_curve(points)
-
-            continue
-
-        # Not implemented
-        if cmd_letter in not_implemented:
-            raise NotImplementedError("Instruction not implemented ['{}']".format(command))
-
-        # Not recognized
-        raise ValueError("Instruction not recognized ['{}']".format(command))
+    time_function_log(process_paths)
 
     if len(path) != 0:
         paths.append(path)
@@ -262,8 +268,11 @@ def extract_arc_data(inp, path, relative):
 def _parse_command_input(command_input):
     """Parses command inputs and returns a list of floats"""
     # Finds a number
-    pattern = r"\-?\.?(?:(?:(?<=\.)\d+(?:e\d+)?)|(?:(?<!\.)\d+(?:\.?\d+(?:e\-?\d+)?)?))"
-    result = re.findall(pattern, command_input)
+    def match_numbers():
+        pattern = r"\-?\.?(?:(?:(?<=\.)\d+(?:e\d+)?)|(?:(?<!\.)\d+(?:\.?\d+(?:e\-?\d+)?)?))"
+        result = re.findall(pattern, command_input)
+
+    result = time_function_log(match_numbers)
     if len(result) == 0:
         return []
 

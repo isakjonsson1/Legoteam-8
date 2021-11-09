@@ -84,18 +84,22 @@ class Robot:
             if distance is None:
                 distance = 0
 
-            t_param = curve.get_t(distance / self.scale)
+            try:
+                t_param = curve.get_t(distance / self.scale)
+            except ValueError:
+                break
+            
             curvature = curve.get_curvature(t_param)
             self.drive_base.drive(SPEED, math.degrees(SPEED * curvature / self.scale))
 
         # Updates params
         self.angle = curve.get_end_angle()
-        self.pos = curve.get_end_pos()
+        self.pos = curve.get_end_pos() + self.offset * self.scale
 
     def move_to(self, pos):
         """Moves to a specified point in the coordinates system of the curves."""
         # Defines the length
-        line = Line([self.pos, pos])
+        line = Line([self.pos, pos + self.offset * self.scale])
 
         # No change if line length is zero
         if line.length() > 1e-5:
@@ -113,7 +117,7 @@ class Robot:
         """
         Turns the robot in the direction specified by the end_angle (in radians).
         """
-        angle_delta = (((end_angle - self.angle) + math.pi) % math.tau) - math.pi
+        angle_delta = (((end_angle - self.angle) + math.pi) % (math.pi * 2) - math.pi)
         self.drive_base.turn(math.degrees(angle_delta))
 
         # Update params

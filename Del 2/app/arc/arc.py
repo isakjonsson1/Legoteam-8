@@ -172,9 +172,9 @@ class Arc(NonLinearCurve):
         point2.x /= radii.x
         point2.y /= radii.y
 
-        angle_delta = Point.angle_between(point1, point2) % math.tau
+        angle_delta = Point.angle_between(point1, point2) % (math.pi * 2)
 
         if sweep:
-            angle_delta -= math.tau
+            angle_delta -= (math.pi * 2)
 
         return angle_delta

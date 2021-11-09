@@ -1,19 +1,20 @@
 #!/usr/bin/env pybricks-micropython
 """Entrypoint file"""
 import sys
-import os
 
 from app.svg.parsing import parse_svg
 from robot import Robot
 from app.point import Point
 from robot.config import DRAWING_LEN
+from app.utils.logging import time_function_log
 
+# Resets the log file
+with open("latest.log", 'w') as file:
+    file.write("")
 
 def main():
     """Program entrypoint - Here comes the main logic"""
-    paths = parse_svg(
-        os.path.join("app", "svg", "sample_svgs", "Mediamodifier-Design.svg")
-    )
+    paths = time_function_log(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
 
     # Finds min position of the paths
     min_x = min(path.min_position.x for path in paths)
@@ -23,12 +24,18 @@ def main():
     max_x = max(path.max_position.x for path in paths)
     max_y = max(path.max_position.y for path in paths)
 
+    with open("logfile.log", "a") as file:
+        file.write("max_x is {} and max_y is {}\n".format(max_x, max_y))
+        file.write("The scale is therefore {}\n".format(DRAWING_LEN / max(max_x - min_x, max_y - min_y)))
+
     robot = Robot(
         offset=-Point(min_x, min_y),
         scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
     )
 
-    for path in paths:
+    print("Driving through paths...")
+    for i, path in enumerate(paths):
+        print("Driving through path {}".format(i))
         robot.drive_through_path(path, drawing=True)
 
 
@@ -36,10 +43,10 @@ def plot():
     from app.utils import plotting
     import matplotlib.pyplot as plt
 
-    img1_path = os.path.join("app", "svg", "sample_svgs", "Mediamodifier-Design.svg")
-    img2_path = os.path.join("app", "svg", "sample_svgs", "arc_test1.svg")
-    img3_path = os.path.join("app", "svg", "sample_svgs", "arc_test2.svg")
-    img4_path = os.path.join("app", "svg", "sample_svgs", "smiley.svg")
+    img1_path = r"app\svg\sample_svgs\Mediamodifier-Design.svg"
+    img2_path = r"app\svg\sample_svgs\arc_test1.svg"
+    img3_path = r"app\svg\sample_svgs\arc_test2.svg"
+    img4_path = r"app\svg\sample_svgs\smiley.svg"
 
     names = ["Mediamodifier-Design.svg", "arc_test1.svg", "arc_test2.svg", "smiley.svg"]
 
