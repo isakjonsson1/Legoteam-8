@@ -7,6 +7,7 @@ from app.point import Point
 from app.svg import Path
 from app.utils.logging import time_function_log
 
+
 def parse_svg(svg_file_name):
     """Parses an svg file and returns a list of paths in the svg"""
     instructions, inputs = _commands_from_svg(svg_file_name)
@@ -25,7 +26,6 @@ def _commands_from_svg(svg_file_name):
     """
     with open(svg_file_name, "r", encoding="utf-8") as file:
         text = file.read().replace("\n", "")
-
 
     # match paths
     regex = r"(?<=\bd=\").*?(?=\")"
@@ -87,61 +87,61 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
 
     path = Path()
     paths = []
-    def process_paths():
-        for command, raw_input in zip(instuctions, inputs):
-            cmd_letter = command.lower()
-            relative = cmd_letter == command
-            inp = _parse_command_input(raw_input)
 
+    for command, raw_input in zip(instuctions, inputs):
+        cmd_letter = command.lower()
+        relative = cmd_letter == command
+        inp = _parse_command_input(raw_input)
+
+        if cmd_letter in movement:
+            # Close path
+            if cmd_letter == "z":
+                # Line to start
+                path.append_curve([path.start_position])
+                start_point = path.start_position
+
+            # Move to
+            elif cmd_letter == "m":
+                start_point = Point(inp[0], -inp[1])
+                # implicit lineto
+                if len(inp) > 2:
+                    cmd_letter = "l"
+                    inp = inp[2:]
+
+            if len(path) != 0:
+                paths.append(path)
+
+            # Starts new subpath
+            path = Path(start_point)
+
+            # No implicit lineto
             if cmd_letter in movement:
-                # Close path
-                if cmd_letter == "z":
-                    # Line to start
-                    path.append_curve([path.start_position])
-                    start_point = path.start_position
-
-                # Move to
-                elif cmd_letter == "m":
-                    start_point = Point(inp[0], -inp[1])
-                    # implicit lineto
-                    if len(inp) > 2:
-                        cmd_letter = "l"
-                        inp = inp[2:]
-
-                if len(path) != 0:
-                    paths.append(path)
-
-                # Starts new subpath
-                path = Path(start_point)
-
-                # No implicit lineto
-                if cmd_letter in movement:
-                    continue
-
-            # Curve
-            if cmd_letter in extract_dict:
-                points_gen = extract_dict[cmd_letter]
-
-                # Eliptic arc
-                if cmd_letter == "a":
-                    for data in points_gen(inp, path, relative):
-                        path.append(Arc(*data))
-                    continue
-
-                # Bezier
-                for points in points_gen(inp, path, relative):
-                    path.append_curve(points)
-
                 continue
 
-            # Not implemented
-            if cmd_letter in not_implemented:
-                raise NotImplementedError("Instruction not implemented ['{}']".format(command))
+        # Curve
+        if cmd_letter in extract_dict:
+            points_gen = extract_dict[cmd_letter]
 
-            # Not recognized
-            raise ValueError("Instruction not recognized ['{}']".format(command))
+            # Eliptic arc
+            if cmd_letter == "a":
+                for data in points_gen(inp, path, relative):
+                    path.append(Arc(*data))
+                continue
 
-    time_function_log(process_paths)
+            # Bezier
+            for points in points_gen(inp, path, relative):
+                path.append_curve(points)
+
+            continue
+
+        # Not implemented
+        if cmd_letter in not_implemented:
+            raise NotImplementedError(
+                "Instruction not implemented ['{}']".format(command)
+            )
+
+        # Not recognized
+        raise ValueError("Instruction not recognized ['{}']".format(command))
 
     if len(path) != 0:
         paths.append(path)
@@ -268,11 +268,9 @@ def extract_arc_data(inp, path, relative):
 def _parse_command_input(command_input):
     """Parses command inputs and returns a list of floats"""
     # Finds a number
-    def match_numbers():
-        pattern = r"\-?\.?(?:(?:(?<=\.)\d+(?:e\d+)?)|(?:(?<!\.)\d+(?:\.?\d+(?:e\-?\d+)?)?))"
-        result = re.findall(pattern, command_input)
+    pattern = r"\-?\.?(?:(?:(?<=\.)\d+(?:e\d+)?)|(?:(?<!\.)\d+(?:\.?\d+(?:e\-?\d+)?)?))"
+    result = re.findall(pattern, command_input)
 
-    result = time_function_log(match_numbers)
     if len(result) == 0:
         return []
 
