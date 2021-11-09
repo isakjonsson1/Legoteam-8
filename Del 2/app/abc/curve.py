@@ -4,7 +4,7 @@ from math import atan2
 from app.point import Point
 
 
-class Curve():
+class Curve:
     """An abstract class for all curves"""
 
     def __init__(self, points):
@@ -48,8 +48,8 @@ class Curve():
 
         The curvature is the inverse of the radius.
         """
-        vel = self.get_vel(t_param)
-        acc = self.get_acc(t_param)
+        vel = self.get_vel(t_param)  # pylint: disable=assignment-from-no-return
+        acc = self.get_acc(t_param)  # pylint: disable=assignment-from-no-return
 
         return (vel.x * acc.y - vel.y * acc.x) / ((vel.x ** 2 + vel.y ** 2) ** (3 / 2))
 
@@ -71,7 +71,7 @@ class Curve():
 
     def get_angle(self, t_param):
         """Returns the angle at any given t value [0,1] in radians"""
-        vel = self.get_vel(t_param)
+        vel = self.get_vel(t_param)  # pylint: disable=assignment-from-no-return
         return atan2(vel.y, vel.x)
 
     @staticmethod

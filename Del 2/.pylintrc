@@ -4,7 +4,8 @@
 # W0235 = useless-super-delegation
 # E0611 = no-name-in-module
 # E0202 = method-hidden
-disable=E0401, R0903, W0235, E0611, E0202
+# C0209 = consider-using-f-string
+disable=E0401, R0903, W0235, E0611, E0202, C0209
 
 [BASIC]
 good-names=x, y, i
