@@ -5,8 +5,6 @@ from app.abc import Curve
 from app.arc.arc import Arc
 from app.point import Point
 from app.svg import Path
-from app.utils.logging import time_function_log
-
 
 def parse_svg(svg_file_name):
     """Parses an svg file and returns a list of paths in the svg"""
@@ -27,9 +25,10 @@ def _commands_from_svg(svg_file_name):
     with open(svg_file_name, "r", encoding="utf-8") as file:
         text = file.read().replace("\n", "")
 
+
     # match paths
     regex = r"(?<=\bd=\").*?(?=\")"
-    matches = time_function_log(re.findall, regex, text)
+    matches = re.findall(regex, text)
 
     # Slits at every command-letter (command-letter is retained)
     paths = []
@@ -42,11 +41,8 @@ def _commands_from_svg(svg_file_name):
     # [L, l, H, h, V, v]: Lines
     # [A, a]: Eliptical arcs
     # https://www.w3.org/TR/SVG/paths.html#PathData
-    def append_matches():
-        for match in matches:
-            paths.append(re.split("([cCsSqQtTlLaAvVhHmMzZ])", match))
-
-    time_function_log(append_matches)
+    for match in matches:
+        paths.append(re.split("([cCsSqQtTlLaAvVhHmMzZ])", match))
 
     # Removes first element of every list of command chain (path) (it's empty)
     # Removes whitespace from command
@@ -87,7 +83,6 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
 
     path = Path()
     paths = []
-
     for command, raw_input in zip(instuctions, inputs):
         cmd_letter = command.lower()
         relative = cmd_letter == command
@@ -136,9 +131,7 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
 
         # Not implemented
         if cmd_letter in not_implemented:
-            raise NotImplementedError(
-                "Instruction not implemented ['{}']".format(command)
-            )
+            raise NotImplementedError("Instruction not implemented ['{}']".format(command))
 
         # Not recognized
         raise ValueError("Instruction not recognized ['{}']".format(command))

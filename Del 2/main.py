@@ -6,7 +6,6 @@ from app.svg.parsing import parse_svg
 from robot import Robot
 from app.point import Point
 from robot.config import DRAWING_LEN
-from app.utils.logging import time_function_log
 
 # Resets the log file
 with open("latest.log", 'w') as file:
@@ -14,7 +13,7 @@ with open("latest.log", 'w') as file:
 
 def main():
     """Program entrypoint - Here comes the main logic"""
-    paths = time_function_log(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
+    paths = parse_svg("app/svg/sample_svgs/Mediamodifier-Design.svg")
 
     # Finds min position of the paths
     min_x = min(path.min_position.x for path in paths)
