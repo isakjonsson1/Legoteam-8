@@ -10,6 +10,9 @@ from app.svg import Path
 def parse_svg(svg_file_name):
     """Parses an svg file and returns a list of paths in the svg"""
     instructions, inputs = _commands_from_svg(svg_file_name)
+    if len(instructions) == 0:
+        return [Path()]
+
     return _commands_to_paths(instructions, inputs)
 
 
@@ -96,8 +99,10 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
             # Move to
             elif cmd_letter == "m":
                 start_point = Point(inp[0], -inp[1])
-                if relative:
-                    start_point += path.end_position
+                # implicit lineto
+                if len(inp) > 2:
+                    cmd_letter = "l"
+                    inp = inp[2:]
 
             if len(path) != 0:
                 paths.append(path)
@@ -105,7 +110,9 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
             # Starts new subpath
             path = Path(start_point)
 
-            continue
+            # No implicit lineto
+            if cmd_letter in movement:
+                continue
 
         # Curve
         if cmd_letter in extract_dict:
@@ -255,7 +262,7 @@ def extract_arc_data(inp, path, relative):
 def _parse_command_input(command_input):
     """Parses command inputs and returns a list of floats"""
     # Finds a number
-    pattern = r"\-?\.?(?:(?:(?<=\.)\d+)|(?:(?<!\.)\d+(?:\.?\d+)?))"
+    pattern = r"\-?\.?(?:(?:(?<=\.)\d+(?:e\d+)?)|(?:(?<!\.)\d+(?:\.?\d+(?:e\-?\d+)?)?))"
     result = re.findall(pattern, command_input)
     if len(result) == 0:
         return []
