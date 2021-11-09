@@ -26,7 +26,7 @@ class Point:
 
     def __sub__(self, other):
         """subs two points, other must be point"""
-        return self.__class__(self.x - other.y, self.x - other.y)
+        return self.__class__(self.x - other.x, self.y - other.y)
 
     def __mul__(self, other):
         """Multiplies self by a number. [other must be a number]"""

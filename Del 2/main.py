@@ -84,8 +84,8 @@ if __name__ == "__main__":
 
         sys.exit(pytest.main(["-x", "tests"]))
 
-    # if len(sys.argv) > 1 and sys.argv[1] == "plot":
-    plot()
-    exit()
+    if len(sys.argv) > 1 and sys.argv[1] == "plot":
+        plot()
+        exit()
 
     main()
