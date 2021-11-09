@@ -21,23 +21,16 @@ class Point:
         return math.sqrt(self.x ** 2 + self.y ** 2)
 
     def __add__(self, other):
-        if isinstance(other, self.__class__):
-            return self.__class__(self.x + other.x, self.y + other.y)
-
-        raise TypeError(
-            "unsupported operand type(s) for +: '{}' and '{type(other)}'".format(self.__class__)
-        )
+        """adds two points, other must be point"""
+        return self.__class__(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other):
-        return self + (-1) * other
+        """subs two points, other must be point"""
+        return self.__class__(self.x - other.y, self.x - other.y)
 
     def __mul__(self, other):
-        if isinstance(other, (int, float)):
-            return self.__class__(self.x * other, self.y * other)
-
-        raise TypeError(
-            "unsupported operand type(s) for *: '{}' and '{}'".format(self.__class__, type(other))
-        )
+        """Multiplies self by a number. [other must be a number]"""
+        return self.__class__(self.x * other, self.y * other)
 
     def __rmul__(self, other):
         return self * other
@@ -64,7 +57,10 @@ class Point:
     def angle_between(point1, point2):
         """Returns the angle between two vectors from origo to the given points"""
         dot_prod = point1.x * point2.x + point1.y * point2.y
-        angle = math.acos(dot_prod / (point1.length() * point2.length()))
+        _cos = dot_prod / (point1.length() * point2.length())
+        _cos = min(1, _cos)
+        _cos = max(-1, _cos)
+        angle = math.acos(_cos)
 
         # Account for the positions of the point
         if point1.y * point2.x > point1.x * point2.y:

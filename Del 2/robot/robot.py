@@ -17,7 +17,6 @@ class Robot:
 
     def __init__(
         self,
-        offset,
         scale,
         start_angle=0,
         start_pos=Point(x=0, y=0),
@@ -35,7 +34,6 @@ class Robot:
         pen_motor is the motor that drives the pen.
         """
         self.scale = scale
-        self.offset = offset
         self.angle = start_angle
         self.pos = start_pos
         self.drive_base = _drive_base
@@ -69,7 +67,7 @@ class Robot:
         """
         self.lift_pen()
         # Moves the robot
-        self.move_to(curve.get_start_pos() + self.offset * self.scale)
+        self.move_to(curve.get_start_pos())
         self.change_angle(curve.get_start_angle())
 
         if drawing:
@@ -80,6 +78,7 @@ class Robot:
         while (
             self.drive_base.distance() is None and curve.length() != 0
         ) or self.drive_base.distance() < curve.length() * self.scale:
+
             distance = self.drive_base.distance()
             if distance is None:
                 distance = 0
@@ -88,18 +87,18 @@ class Robot:
                 t_param = curve.get_t(distance / self.scale)
             except ValueError:
                 break
-            
+
             curvature = curve.get_curvature(t_param)
             self.drive_base.drive(SPEED, math.degrees(SPEED * curvature / self.scale))
 
         # Updates params
         self.angle = curve.get_end_angle()
-        self.pos = curve.get_end_pos() + self.offset * self.scale
+        self.pos = curve.get_end_pos()
 
     def move_to(self, pos):
         """Moves to a specified point in the coordinates system of the curves."""
         # Defines the length
-        line = Line([self.pos, pos + self.offset * self.scale])
+        line = Line([self.pos, pos])
 
         # No change if line length is zero
         if line.length() > 1e-5:
@@ -117,7 +116,7 @@ class Robot:
         """
         Turns the robot in the direction specified by the end_angle (in radians).
         """
-        angle_delta = (((end_angle - self.angle) + math.pi) % (math.pi * 2) - math.pi)
+        angle_delta = ((end_angle - self.angle) + math.pi) % (math.pi * 2) - math.pi
         self.drive_base.turn(math.degrees(angle_delta))
 
         # Update params

@@ -1,19 +1,24 @@
 #!/usr/bin/env pybricks-micropython
 """Entrypoint file"""
+import cProfile
 import sys
 
 from app.svg.parsing import parse_svg
+from app.utils.logging import time_function_log
 from robot import Robot
 from app.point import Point
 from robot.config import DRAWING_LEN
 
 # Resets the log file
-with open("latest.log", 'w') as file:
-    file.write("")
+
 
 def main():
     """Program entrypoint - Here comes the main logic"""
-    paths = parse_svg("app/svg/sample_svgs/Mediamodifier-Design.svg")
+    profile = cProfile.Profile()
+
+    paths = profile.runcall(parse_svg, "app/svg/sample_svgs/arc_test2.svg")
+
+    profile.dump_stats("latest.log")
 
     # Finds min position of the paths
     min_x = min(path.min_position.x for path in paths)
@@ -24,12 +29,20 @@ def main():
     max_y = max(path.max_position.y for path in paths)
 
     with open("logfile.log", "a") as file:
-        file.write("max_x is {} and max_y is {}\n".format(max_x, max_y))
-        file.write("The scale is therefore {}\n".format(DRAWING_LEN / max(max_x - min_x, max_y - min_y)))
+        file.write(
+            "the max poitn is ({}, {}) and the min point is ({}, {})\n".format(
+                max_x, max_y, min_x, min_y
+            )
+        )
+        file.write(
+            "The scale is therefore {}\n".format(
+                DRAWING_LEN / max(max_x - min_x, max_y - min_y)
+            )
+        )
 
     robot = Robot(
-        offset=-Point(min_x, min_y),
         scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
+        start_pos=Point(min_x, min_y),
     )
 
     print("Driving through paths...")
@@ -71,8 +84,8 @@ if __name__ == "__main__":
 
         sys.exit(pytest.main(["-x", "tests"]))
 
-    if len(sys.argv) > 1 and sys.argv[1] == "plot":
-        plot()
-        exit()
+    # if len(sys.argv) > 1 and sys.argv[1] == "plot":
+    plot()
+    exit()
 
     main()

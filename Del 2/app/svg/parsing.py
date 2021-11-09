@@ -6,6 +6,7 @@ from app.arc.arc import Arc
 from app.point import Point
 from app.svg import Path
 
+
 def parse_svg(svg_file_name):
     """Parses an svg file and returns a list of paths in the svg"""
     instructions, inputs = _commands_from_svg(svg_file_name)
@@ -24,7 +25,6 @@ def _commands_from_svg(svg_file_name):
     """
     with open(svg_file_name, "r", encoding="utf-8") as file:
         text = file.read().replace("\n", "")
-
 
     # match paths
     regex = r"(?<=\bd=\").*?(?=\")"
@@ -131,7 +131,9 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
 
         # Not implemented
         if cmd_letter in not_implemented:
-            raise NotImplementedError("Instruction not implemented ['{}']".format(command))
+            raise NotImplementedError(
+                "Instruction not implemented ['{}']".format(command)
+            )
 
         # Not recognized
         raise ValueError("Instruction not recognized ['{}']".format(command))
