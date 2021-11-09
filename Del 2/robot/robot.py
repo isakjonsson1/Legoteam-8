@@ -17,6 +17,7 @@ class Robot:
 
     def __init__(
         self,
+        offset,
         scale,
         start_angle=0,
         start_pos=Point(x=0, y=0),
@@ -34,6 +35,7 @@ class Robot:
         pen_motor is the motor that drives the pen.
         """
         self.scale = scale
+        self.offset = offset
         self.angle = start_angle
         self.pos = start_pos
         self.drive_base = _drive_base

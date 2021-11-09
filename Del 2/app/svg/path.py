@@ -66,6 +66,20 @@ class Path(list):
         """Returns the end angle of the path"""
         return self[-1].get_end_angle()
 
+    @property
+    def min_position(self):
+        """Retuns a point with the min x and y value"""
+        min_x = min(point.x for curve in self for point in curve)
+        min_y = min(point.y for curve in self for point in curve)
+        return Point(min_x, min_y)
+
+    @property
+    def max_position(self):
+        """Returns a point with the max x and y value"""
+        max_x = max(point.x for curve in self for point in curve)
+        max_y = max(point.y for curve in self for point in curve)
+        return Point(max_x, max_y)
+
     @classmethod
     def from_curves_list(cls, curves):
         """Returns a path based on a list of curves"""
