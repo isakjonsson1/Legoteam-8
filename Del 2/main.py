@@ -16,7 +16,7 @@ def main():
     """Program entrypoint - Here comes the main logic"""
     profile = cProfile.Profile()
 
-    paths = profile.runcall(parse_svg, "app/svg/sample_svgs/arc_test2.svg")
+    paths = profile.runcall(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
 
     profile.dump_stats("latest.log")
 
