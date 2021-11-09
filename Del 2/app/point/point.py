@@ -57,10 +57,7 @@ class Point:
     def angle_between(point1, point2):
         """Returns the angle between two vectors from origo to the given points"""
         dot_prod = point1.x * point2.x + point1.y * point2.y
-        _cos = dot_prod / (point1.length() * point2.length())
-        _cos = min(1, _cos)
-        _cos = max(-1, _cos)
-        angle = math.acos(_cos)
+        angle = math.acos(dot_prod / (point1.length() * point2.length()))
 
         # Account for the positions of the point
         if point1.y * point2.x > point1.x * point2.y:

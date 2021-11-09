@@ -68,7 +68,7 @@ class Arc(NonLinearCurve):
         if self.rotation:
             point = point.rotated(self.rotation)
 
-        return point
+        return point + self.center
 
     def get_vel(self, t_param):
         """
