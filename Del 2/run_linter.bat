@@ -4,7 +4,7 @@ python -m pip install --upgrade pylint
 echo.
 
 echo [36mRunning linter on run.py[0m
-pylint run.py
+pylint main.py
 
 echo [36mRunning linter on robot/* directory[0m
 pylint robot

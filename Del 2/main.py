@@ -9,16 +9,23 @@ from robot import Robot
 from app.point import Point
 from robot.config import DRAWING_LEN
 
-# Resets the log file
+# Resets the log files
+with open("latest.log", "w") as f:
+    pass
+with open("logfile.log", "w") as f:
+    pass
 
 
 def main():
     """Program entrypoint - Here comes the main logic"""
-    profile = cProfile.Profile()
 
-    paths = profile.runcall(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
+    # Profiler:
+    # profile = cProfile.Profile()
+    # profile.runcall(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
+    # profile.dump_stats("latest.log")
 
-    profile.dump_stats("latest.log")
+    # Simple timer:
+    paths = time_function_log(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
 
     # Finds min position of the paths
     min_x = min(path.min_position.x for path in paths)
