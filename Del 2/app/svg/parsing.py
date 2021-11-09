@@ -75,7 +75,6 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
     }
 
     not_implemented = {
-        "a",
         "h",
         "v",
     }
