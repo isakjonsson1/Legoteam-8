@@ -40,32 +40,52 @@ class Robot:
         self.pos = start_pos
         self.drive_base = _drive_base
         self.pen_motor = _pen_motor
+        
+        self.pen_state=True
+        self.lift_pen()
 
     def lift_pen(self):
         """Lifts the pen from the paper"""
-        self.pen_motor.run_target(360, 270, then=Stop.HOLD, wait=True)
+        if self.pen_state:
+            self.pen_motor.run_target(360, 270, then=Stop.HOLD, wait=True)
+
+        self.pen_state = False
 
     def engage_pen(self):
         """Puts the pen on the paper"""
-        self.pen_motor.run_target(-360, 0, then=Stop.HOLD, wait=True)
+        if not self.pen_state:
+            self.pen_motor.run_target(-360, 0, then=Stop.HOLD, wait=True)
+        
+        self.pen_state = True
 
-    def drive_through_path(self, path):
+    def drive_through_path(self, path, drawing=True):
         """Drives through a given path"""
         for curve in path:
-            self.drive_through_curve(curve)
+            self.drive_through_curve(curve, drawing=drawing)
 
-    def drive_through_curve(self, curve):
+    def drive_through_curve(self, curve, drawing=True):
         """
         Drives the robot to the start position of the curve and drives through it.
         """
+        self.lift_pen()
         # Moves the robot
-        self.move_to(curve.get_start_pos())
+        self.move_to(curve.get_start_pos() + self.offset * self.scale)
         self.change_angle(curve.get_start_angle())
 
+        if drawing:
+            self.engage_pen()
+            
         # Follows the curve
         self.drive_base.reset()
-        while self.drive_base.distance() < curve.length() * self.scale:
-            t_param = curve.get_t(self.drive_base.distance() / self.scale)
+        while (
+            self.drive_base.distance() is None and curve.length() != 0 or
+            self.drive_base.distance() < curve.length() * self.scale
+        ):
+            distance = self.drive_base.distance()
+            if distance is None:
+                distance = 0
+
+            t_param = curve.get_t(distance / self.scale)
             curve = curve.get_curvature(t_param)
             self.drive_base.drive(SPEED, math.degrees(SPEED * curve / self.scale))
 
