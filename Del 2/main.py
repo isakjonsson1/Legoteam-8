@@ -1,6 +1,5 @@
 #!/usr/bin/env pybricks-micropython
 """Entrypoint file"""
-import cProfile  # pylint: disable=unused-import
 import sys
 
 from app.svg.parsing import parse_svg
@@ -18,14 +17,7 @@ with open("logfile.log", "w", encoding="utf-8") as f:
 
 def main():
     """Program entrypoint - Here comes the main logic"""
-
-    # Profiler:
-    # profile = cProfile.Profile()
-    # profile.runcall(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
-    # profile.dump_stats("latest.log")
-
-    # Simple timer:
-    paths = time_function_log(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
+    paths = parse_svg("app/svg/sample_svgs/Mediamodifier-Design.svg")
 
     # Finds min position of the paths
     min_x = min(path.min_position.x for path in paths)
@@ -37,7 +29,7 @@ def main():
 
     with open("logfile.log", "a", encoding="utf-8") as file:
         file.write(
-            "the max poitn is ({}, {}) and the min point is ({}, {})\n".format(
+            "the max point is ({}, {}) and the min point is ({}, {})\n".format(
                 max_x, max_y, min_x, min_y
             )
         )
@@ -91,11 +83,17 @@ def plot():
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "test":
         import pytest
-
         sys.exit(pytest.main(["-x", "tests"]))
 
     if len(sys.argv) > 1 and sys.argv[1] == "plot":
         plot()
         sys.exit()
+
+    if len(sys.argv) > 1 and sys.argv[1] == "profile":
+        import cProfile  # pylint: disable=import-outside-toplevel
+
+        profile = cProfile.Profile()
+        profile.runcall(main)
+        profile.dump_stats("latest.log")
 
     main()
