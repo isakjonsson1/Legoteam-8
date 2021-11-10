@@ -26,7 +26,9 @@ pytest==6.2.5
 python-dateutil==2.8.2
 regex==2021.10.23
 six==1.16.0
+snakeviz==2.1.1
 toml==0.10.2
 tomli==1.2.2
+tornado==6.1
 typing-extensions==3.10.0.2
 wrapt==1.13.2
