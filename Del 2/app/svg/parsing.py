@@ -83,7 +83,8 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
 
     path = Path()
     paths = []
-    for command, raw_input in zip(instuctions, inputs):
+    for i, (command, raw_input) in enumerate(zip(instuctions, inputs)):
+        print(round(i / (len(inputs) - 1)) + "%")
         cmd_letter = command.lower()
         relative = cmd_letter == command
         inp = _parse_command_input(raw_input)
