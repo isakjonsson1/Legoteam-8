@@ -11,7 +11,7 @@ from robot.config import DRAWING_LEN
 def main():
     """Program entrypoint - Here comes the main logic"""
     print("Parsing SVG-file")
-    paths = parse_svg("app/svg/sample_svgs/Mediamodifier-Design.svg")
+    paths = parse_svg("app/svg/sample_svgs/arc_test1.svg")
 
     # Debugging
     print("File fully parsed.")
@@ -103,6 +103,6 @@ if __name__ == "__main__":
         profile.dump_stats("latest.log")
 
         os.system("{} -m snakeviz latest.log".format(sys.executable))
-        exit()
+        sys.exit()
 
     main()
