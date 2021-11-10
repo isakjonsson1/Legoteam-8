@@ -88,9 +88,13 @@ if __name__ == "__main__":
 
     if len(sys.argv) > 1 and sys.argv[1] == "profile":
         import cProfile  # pylint: disable=import-outside-toplevel
+        import os # pylint: disable=import-outside-toplevel
 
         profile = cProfile.Profile()
-        profile.runcall(main)
+        profile.runcall(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
         profile.dump_stats("latest.log")
+        
+        os.system("{} -m snakeviz latest.log".format(sys.executable))
+        exit()
 
     main()
