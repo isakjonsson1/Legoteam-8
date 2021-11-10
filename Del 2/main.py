@@ -3,16 +3,13 @@
 import sys
 
 from app.svg.parsing import parse_svg
-from app.utils.logging import time_function_log
 from app.point import Point
 from robot import Robot
 from robot.config import DRAWING_LEN
 
 # Resets the log files
 with open("latest.log", "w", encoding="utf-8") as f:
-    pass
-with open("logfile.log", "w", encoding="utf-8") as f:
-    pass
+    f.write("")
 
 
 def main():
