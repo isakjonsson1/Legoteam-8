@@ -25,7 +25,8 @@ class NonLinearCurve(Curve):
         look_up_table = {}
 
         # Samples of t in the interval <0, 1]
-        t_params = (i / number_of_entries for i in range(1, number_of_entries + 1))
+        delta = 1 / number_of_entries
+        t_params = (i * delta for i in range(1, number_of_entries + 1))
 
         traversed_length = 0
         look_up_table[traversed_length] = 0

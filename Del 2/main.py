@@ -21,7 +21,7 @@ def main():
 
     # Profiler:
     # profile = cProfile.Profile()
-    # profile.runcall(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
+    # paths = profile.runcall(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
     # profile.dump_stats("latest.log")
 
     # Simple timer:
