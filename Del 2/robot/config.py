@@ -8,11 +8,11 @@ from pybricks.robotics import DriveBase
 pen_motor = Motor(port=Port.D, positive_direction=Direction.CLOCKWISE)
 left_motor = Motor(port=Port.A)
 right_motor = Motor(port=Port.B)
-drive_base = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=82.1)
+drive_base = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=128)
 
 # ev3
 ev3 = EV3Brick()
 
 # Constants
-SPEED = 100
+SPEED = 20
 DRAWING_LEN = 600
