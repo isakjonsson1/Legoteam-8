@@ -85,9 +85,48 @@ def plot():
     plotting.show()
 
 
+def turtle():
+    """Used to simulate the way the robot would drive through an svg file"""
+    from turtle_sim import Turtle  # pylint: disable=import-outside-toplevel
+
+    print("Parsing SVG-file")
+    paths = parse_svg("app/svg/sample_svgs/smiley.svg")
+
+    # Debugging
+    print("File fully parsed.")
+    print("Finding min and max positions of the path...")
+
+    # Finds min position of the paths
+    min_x = min(path.min_position.x for path in paths)
+    min_y = min(path.min_position.y for path in paths)
+
+    # Finds max position of the paths
+    max_x = max(path.max_position.x for path in paths)
+    max_y = max(path.max_position.y for path in paths)
+
+    print("Found min and max positions of the paths")
+    print("Initializing robot...")
+    turtle_drivebase = Turtle()
+    robot = Robot(
+        scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
+        start_pos=Point(min_x, min_y),
+        _drive_base=turtle_drivebase,
+        _pen_motor=None,
+    )
+
+    print("Done.")
+    print("Driving through paths...")
+
+    for i, path in enumerate(paths):
+        print("Driving through path {}".format(i))
+        robot.drive_through_path(path, drawing=True)
+
+    print("All paths completed.")
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "test":
-        import pytest
+        import pytest  # pylint: disable=import-outside-toplevel
 
         sys.exit(pytest.main(["-x", "tests"]))
 
@@ -104,6 +143,11 @@ if __name__ == "__main__":
         profile.dump_stats("latest.log")
 
         os.system("{} -m snakeviz latest.log".format(sys.executable))
+        sys.exit()
+
+    if len(sys.argv) > 1 and sys.argv[1] == "turtle":
+        turtle()
+        input("Press enter to exit..")
         sys.exit()
 
     main()

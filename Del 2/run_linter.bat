@@ -11,3 +11,6 @@ pylint robot
 
 echo [36mRunning linter on app/* directory[0m
 pylint app
+
+echo [36mRunning linter on turtle_sim/* directory[0m
+pylint turtle_sim
