@@ -14,7 +14,6 @@ def main():
 
 def square(length):
     """Makes the robot drive in a square with sides length milimeters long"""
-    # Checks if the robot is calibrated by driving a square with length n cm.
     drive_base.straight(length)
     drive_base.turn(90)
     drive_base.straight(length)

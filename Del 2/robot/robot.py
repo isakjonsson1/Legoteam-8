@@ -5,7 +5,7 @@ from pybricks.parameters import Stop
 
 from app.point import Point
 from app.curves import Line
-from robot.config import drive_base, pen_motor, SPEED
+from robot.config import *
 
 
 class Robot:
@@ -45,14 +45,14 @@ class Robot:
     def lift_pen(self):
         """Lifts the pen from the paper"""
         if self.pen_state:
-            self.pen_motor.run_target(360, 270, then=Stop.HOLD, wait=True)
+            self.pen_motor.run_angle(TURN_SPEED, TURN_RATE, then=Stop.HOLD, wait=True)
 
         self.pen_state = False
 
     def engage_pen(self):
         """Puts the pen on the paper"""
         if not self.pen_state:
-            self.pen_motor.run_target(-360, 0, then=Stop.HOLD, wait=True)
+            self.pen_motor.run_until_stalled(TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE)
 
         self.pen_state = True
 
