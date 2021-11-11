@@ -36,7 +36,6 @@ class Logger:
         """Sends a debug logging message with logging level 10"""
         return self.log(message, self.DEBUG)
 
-
     def info(self, message):
         """Sends an info logging message with logging level 20"""
         return self.log(message, self.INFO)
