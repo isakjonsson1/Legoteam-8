@@ -106,11 +106,11 @@ def turtle():
 
     print("Found min and max positions of the paths")
     print("Initializing robot...")
-    turtle = Turtle()
+    turtle_drivebase = Turtle()
     robot = Robot(
         scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
         start_pos=Point(min_x, min_y),
-        _drive_base=turtle,
+        _drive_base=turtle_drivebase,
         _pen_motor=None,
     )
 
