@@ -100,9 +100,9 @@ class Logger:
         Intended to be used as a decorator. To run and time the function, see Logger.run_and_time
         instead.
         """
-        def decorated_function():
+        def decorated_function(*args, **kwargs):
             start = time.perf_counter()
-            result = function()
+            result = function(*args, **kwargs)
             end = time.perf_counter()
             self.log(time_log_format % {
                 "name": function.__name__,
@@ -114,9 +114,9 @@ class Logger:
             return result
         return decorated_function
 
-    def run_and_time(self, function, format=""):
+    def run_and_time(self, function, *args, **kwargs):
         """Run and time the given function"""
-        return self.time(function)()
+        return self.time(function)(*args, **kwargs)
 
     def level_num_to_name(self, num):
         """Returns the name of the given level"""
