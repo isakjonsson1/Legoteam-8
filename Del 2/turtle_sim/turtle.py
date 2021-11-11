@@ -6,16 +6,17 @@ from robot.config import DRAWING_LEN
 class Turtle:
     """The turtle object is used to simulate a ev3 drivebase's movement"""
 
-    def __init__(self, sampling_freq=250, update_freq=30):
+    def __init__(self, sampling_freq=250, update_freq=10):
         """Initiates a new Turtle instance.
 
         sampling_freq is how many times per simulated second the position is updated.
         update_freq is how many position updates it takes before the image is refreshed
         """
-        turtle.setworldcoordinates(0, 0, DRAWING_LEN, DRAWING_LEN)
 
         self.turtle = turtle.Turtle()
-        self.screen = turtle.getscreen()
+        self.screen = turtle.Screen()
+
+        self.screen.setworldcoordinates(0, 0, DRAWING_LEN, DRAWING_LEN)
         self.distance_traveled = 0
         self.updates = 0
         self.update_freq = update_freq
