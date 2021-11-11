@@ -5,8 +5,10 @@ from app.abc import Curve
 from app.arc.arc import Arc
 from app.point import Point
 from app.svg import Path
+from robot.config import logger
 
 
+@logger.time()
 def parse_svg(svg_file_name):
     """Parses an svg file and returns a list of paths in the svg"""
     instructions, inputs = _commands_from_svg(svg_file_name)
@@ -16,6 +18,7 @@ def parse_svg(svg_file_name):
     return _commands_to_paths(instructions, inputs)
 
 
+@logger.time()
 def _commands_from_svg(svg_file_name):
     """
     Returns a list of instructions and a list of inputs form an svg file.
@@ -55,6 +58,7 @@ def _commands_from_svg(svg_file_name):
     return instructions, inputs
 
 
+@logger.time()
 def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
     instuctions, inputs
 ):
@@ -144,6 +148,7 @@ def _commands_to_paths(  # pylint: disable=too-many-locals, too-many-branches
     return paths
 
 
+@logger.time()
 def extract_points(number_of_points):
     """
     Returns a generator for the points needed to construct a bezier curve.
@@ -188,6 +193,7 @@ def extract_points(number_of_points):
     return generator
 
 
+@logger.time()
 def extract_smooth_points(number_of_points):
     """
     Returns a generator for the points needed to construct a bezier curve.
@@ -235,6 +241,7 @@ def extract_smooth_points(number_of_points):
     return generator
 
 
+@logger.time()
 def extract_arc_data(inp, path, relative):
     """Returns the arc data needed to construct an eliptic arc
 
@@ -260,6 +267,7 @@ def extract_arc_data(inp, path, relative):
         start_pos = end_pos
 
 
+@logger.time()
 def _parse_command_input(command_input):
     """Parses command inputs and returns a list of floats"""
     # Finds a number

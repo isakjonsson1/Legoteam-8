@@ -42,7 +42,7 @@ def main():
 
     for i, path in enumerate(paths):
         logger.debug("Driving through path {}".format(i))
-        robot.drive_through_path(path, drawing=True)
+        logger.run_and_time(robot.drive_through_path(path, drawing=True))
 
     logger.debug("All paths completed.")
 
