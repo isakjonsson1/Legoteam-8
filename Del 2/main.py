@@ -13,7 +13,6 @@ def main():
     print("Parsing SVG-file")
     paths = parse_svg("app/svg/sample_svgs/triangle.svg")
 
-
     # Debugging
     print("File fully parsed.")
     print("Finding min and max positions of the path...")
@@ -87,7 +86,8 @@ def plot():
 
 
 def turtle():
-    from turtle_sim import Turtle
+    """Used to simulate the way the robot would drive through an svg file"""
+    from turtle_sim import Turtle  # pylint: disable=import-outside-toplevel
 
     print("Parsing SVG-file")
     paths = parse_svg("app/svg/sample_svgs/smiley.svg")
@@ -126,7 +126,7 @@ def turtle():
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "test":
-        import pytest
+        import pytest  # pylint: disable=import-outside-toplevel
 
         sys.exit(pytest.main(["-x", "tests"]))
 
