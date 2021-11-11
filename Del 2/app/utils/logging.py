@@ -83,6 +83,7 @@ class Logger:
             if self.outputs[output] <= loglevel:
                 try:
                     output.write(self.log_format % data)
+                    output.write("\n")
                 except Exception as error:
                     if not self.silent_log_errors:
                         raise error
