@@ -27,10 +27,12 @@ class Logger:
     def __init__(self, 
                  name=__name__,
                  outputs={ sys.stdout: 10, open("latest.log", "w"): 20 },
-                 log_format="%(asctime)s |:| %(levelname)-7s |:| %(message)s"):
+                 log_format="%(asctime)s |:| %(levelname)-7s |:| %(message)s",
+                 silent_log_errors=True):
         self.name = name
         self.outputs = outputs
         self.log_format = log_format
+        self.silent_log_errors = silent_log_errors
 
     def debug(self, message):
         """Sends a debug logging message with logging level 10"""
@@ -72,11 +74,22 @@ class Logger:
             time_struct.tm_second,
             time.time() % 1
         )
+
+        # Track errors, then display them later
+        errors = []
         for output in self.outputs:
             data["levelno"] = self.outputs[output]
             data["levelname"] = self.level_num_to_name(self.outputs[output])
             if self.outputs[output] <= loglevel:
-                output.write(self.log_format % data)
+                try:
+                    output.write(self.log_format % data)
+                except Exception as error:
+                    if not self.silent_log_errors:
+                        raise error
+                    errors[(output, error)]
+
+        for output, error in errors:
+            print("Failed to log to {} ({}).\n\n{}\n{}".format(output, output.name, e.traceback, e))
 
     def time(self, function, loglevel=0, time_log_format="%(name)s took %(time_ms).3fms to run"):
         """
