@@ -93,7 +93,7 @@ class Logger:
         for output, error in errors:
             print("Failed to log to {} ({}).\n\n{}\n{}".format(output, output.name, e.traceback, e))
 
-    def time(self, loglevel=0, time_log_format="%(name)s took %(time_ms).3fms to run"):
+    def time(self, loglevel=0, time_log_format="%(name)s() took %(time_ms).3fms to run"):
         """
         Returns a function that executes the given function, but logs the time taken as well.
         
