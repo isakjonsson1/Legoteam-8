@@ -6,17 +6,17 @@ import sys
 class Logger:
     """
     A class for logging functions
-    
+
     params:
         stdout : bool - If stdout should be an output
-        outputs : dict - Keys are writeable io buffer objects, values are logging level (0 - 50) 
+        outputs : dict - Keys are writeable io buffer objects, values are logging level (0 - 50)
         format : str - Logging format
 
     Note:
-        The valid string format parameters are the same as in the logging standard python module found
-        here: https://docs.python.org/3/library/logging.html#logrecord-attributes
-        However, not all paramters are defined. As per 11 nov 2021 20:00 the implemented parameters are:
-        %(name)s, %(asctime)s, %(time)d, %(levelname)s, %(levelno)d, %(message)s
+        The valid string format parameters are the same as in the logging standard python module
+        found here: https://docs.python.org/3/library/logging.html#logrecord-attributes
+        However, not all paramters are defined. As per 11 nov 2021 20:00 the implemented parameters
+        are: %(name)s, %(asctime)s, %(time)d, %(levelname)s, %(levelno)d, %(message)s
     """
     NOTSET = 0
     DEBUG = 10
@@ -24,9 +24,12 @@ class Logger:
     WARNING = 30
     ERROR = 40
     CRITICAL = 50
-    def __init__(self, 
+    def __init__(self, # pylint: disable=dangerous-default-value
                  name=__name__,
-                 outputs={ sys.stdout: 10, open("latest.log", "a", encoding="UTF-8"): 20 },
+                 outputs={
+                     sys.stdout: 10,
+                     open("latest.log", "a", encoding="UTF-8"): 20 # pylint: disable=consider-using-with
+                 },
                  log_format="%(asctime)s |:| %(name)s:%(levelname)-8s |:| %(message)s",
                  silent_log_errors=True):
         self.name = name
@@ -49,7 +52,7 @@ class Logger:
     def error(self, message):
         """Sends a error logging message with logging level 40"""
         return self.log(message, self.ERROR)
-        
+
     def critical(self, message):
         """Sends a critical logging message with logging level 50"""
         return self.log(message, self.CRITICAL)
@@ -59,7 +62,7 @@ class Logger:
         return self.write_to_outputs({
             "message": message,
         }, level)
-    
+
     def write_to_outputs(self, data, loglevel):
         """Writes to all the outputs with a loglevel lower than or equal to the given loglevel"""
         data["name"] = self.name
@@ -85,10 +88,10 @@ class Logger:
                     output.write(self.log_format % data)
                     output.write("\n")
                     output.flush()
-                except Exception as error:
+                except Exception as error: # pylint: disable=broad-except
                     if not self.silent_log_errors:
                         raise error
-                    errors[(output, error)]
+                    errors.append((output, error))
 
         for output, error in errors:
             print("Failed to log to {} ({}).\n\n".format(output, output.name) +
@@ -97,7 +100,7 @@ class Logger:
     def time(self, loglevel=DEBUG, time_log_format="%(name)s() took %(time_ms).3fms to run"):
         """
         Returns a function that executes the given function, but logs the time taken as well.
-        
+
         Intended to be used as a decorator. To run and time the function, see Logger.run_and_time
         instead.
         """
@@ -123,20 +126,21 @@ class Logger:
 
     def level_num_to_name(self, num):
         """Returns the name of the given level"""
-        if num >= 50:
+        if num >= self.CRITICAL:
             return "CRITICAL"
-        if num >= 40:
+        if num >= self.ERROR:
             return "ERROR"
-        if num >= 30:
+        if num >= self.WARNING:
             return "WARNING"
-        if num >= 20:
+        if num >= self.INFO:
             return "INFO"
-        if num >= 10:
+        if num >= self.DEBUG:
             return "DEBUG"
         return "NOTSET"
 
     def __del__(self):
         """Close all output streams when the object is destructured"""
         for output in self.outputs.keys():
-            if output == sys.stdout: continue
+            if output == sys.stdout:
+                continue
             output.close()
