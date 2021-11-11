@@ -11,7 +11,7 @@ from robot.config import DRAWING_LEN
 def main():
     """Program entrypoint - Here comes the main logic"""
     print("Parsing SVG-file")
-    paths = parse_svg("app/svg/sample_svgs/arc_test1.svg")
+    paths = parse_svg("app/svg/sample_svgs/triangle.svg")
 
     # Debugging
     print("File fully parsed.")
@@ -39,6 +39,7 @@ def main():
     #     )
 
     print("Initializing robot...")
+    print("Check pen motor if initializing does not work")
     robot = Robot(
         scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
         start_pos=Point(min_x, min_y),
