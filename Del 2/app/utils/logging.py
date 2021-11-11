@@ -84,6 +84,7 @@ class Logger:
                 try:
                     output.write(self.log_format % data)
                     output.write("\n")
+                    output.flush()
                 except Exception as error:
                     if not self.silent_log_errors:
                         raise error
