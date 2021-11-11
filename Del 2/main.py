@@ -6,7 +6,7 @@ from app.svg.parsing import parse_svg
 from app.point import Point
 from robot import Robot
 from robot.config import DRAWING_LEN
-from robot.config import logger
+from config import logger
 
 
 def main():

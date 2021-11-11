@@ -5,7 +5,7 @@ from app.abc import Curve
 from app.arc.arc import Arc
 from app.point import Point
 from app.svg import Path
-from robot.config import logger
+from config import logger
 
 
 @logger.time()

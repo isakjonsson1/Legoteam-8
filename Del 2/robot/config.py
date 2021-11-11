@@ -4,7 +4,6 @@ from pybricks.ev3devices import Motor
 from pybricks.parameters import Direction, Port
 from pybricks.robotics import DriveBase
 
-from app.utils.logging import Logger
 
 # Motors and drive base
 pen_motor = Motor(port=Port.D, positive_direction=Direction.CLOCKWISE)
@@ -14,9 +13,6 @@ drive_base = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=12
 
 # ev3
 ev3 = EV3Brick()
-
-# logging
-logger = Logger("MAIN")
 
 # Constants
 SPEED = 20
