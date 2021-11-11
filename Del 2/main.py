@@ -30,7 +30,7 @@ def main():
     logger.debug("The max point is ({}, {}) ".format(max_x, max_y) +
                  "and the min point is ({}, {})".format(min_x, min_y))
 
-    logger.debug("The scale is therefore {}".format(DRAWING_LEN / max(max_x - min_x, max_y - min_y)))
+    logger.debug("The scale is: {:.3f}".format(DRAWING_LEN / max(max_x - min_x, max_y - min_y)))
     logger.debug("Initializing robot...")
     robot = Robot(
         scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
