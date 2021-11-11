@@ -56,7 +56,7 @@ class Logger:
 
     def log(self, message, level):
         """Sends a logging message with the given logging message"""
-        return write_to_outputs({
+        return self.write_to_outputs({
             "message": message,
         }, level)
     
@@ -67,11 +67,11 @@ class Logger:
         time_struct = time.localtime()
         data["asctime"] = "{}-{}-{} {}:{}:{},{:.3f}".format(
             time_struct.tm_year,
-            time_struct.tm_month,
-            time_struct.tm_day,
+            time_struct.tm_mon,
+            time_struct.tm_mday,
             time_struct.tm_hour,
-            time_struct.tm_minute,
-            time_struct.tm_second,
+            time_struct.tm_min,
+            time_struct.tm_sec,
             time.time() % 1
         )
 
