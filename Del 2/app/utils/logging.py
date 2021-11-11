@@ -26,7 +26,7 @@ class Logger:
     CRITICAL = 50
     def __init__(self, 
                  name=__name__,
-                 outputs={ sys.stdout: 10, open("latest.log", "a"): 20 },
+                 outputs={ sys.stdout: 10, open("latest.log", "a", encoding="UTF-8"): 20 },
                  log_format="%(asctime)s |:| %(name)s:%(levelname)-8s |:| %(message)s",
                  silent_log_errors=True):
         self.name = name
