@@ -91,7 +91,8 @@ class Logger:
                     errors[(output, error)]
 
         for output, error in errors:
-            print("Failed to log to {} ({}).\n\n{}\n{}".format(output, output.name, e.traceback, e))
+            print("Failed to log to {} ({}).\n\n".format(output, output.name) +
+                  "{}\n{}".format(error.traceback, error))
 
     def time(self, loglevel=DEBUG, time_log_format="%(name)s() took %(time_ms).3fms to run"):
         """
