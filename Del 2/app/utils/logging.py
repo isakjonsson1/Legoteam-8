@@ -16,7 +16,7 @@ class Logger:
         The valid string format parameters are the same as in the logging standard python module found
         here: https://docs.python.org/3/library/logging.html#logrecord-attributes
         However, not all paramters are defined. As per 11 nov 2021 20:00 the implemented parameters are:
-        %(asctime)s, %(time)d, %(levelname)s, %(levelno)d, %(message)s
+        %(name)s, %(asctime)s, %(time)d, %(levelname)s, %(levelno)d, %(message)s
     """
     NOTSET = 0
     DEBUG = 10
@@ -27,7 +27,7 @@ class Logger:
     def __init__(self, 
                  name=__name__,
                  outputs={ sys.stdout: 10, open("latest.log", "w"): 20 },
-                 log_format="%(asctime)s |:| %(levelname)-7s |:| %(message)s",
+                 log_format="%(asctime)s |:| %(name)s:%(levelname)-7s |:| %(message)s",
                  silent_log_errors=True):
         self.name = name
         self.outputs = outputs
