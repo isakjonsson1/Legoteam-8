@@ -93,30 +93,32 @@ class Logger:
         for output, error in errors:
             print("Failed to log to {} ({}).\n\n{}\n{}".format(output, output.name, e.traceback, e))
 
-    def time(self, function, loglevel=0, time_log_format="%(name)s took %(time_ms).3fms to run"):
+    def time(self, loglevel=0, time_log_format="%(name)s took %(time_ms).3fms to run"):
         """
         Returns a function that executes the given function, but logs the time taken as well.
         
         Intended to be used as a decorator. To run and time the function, see Logger.run_and_time
         instead.
         """
-        def decorated_function(*args, **kwargs):
-            start = time.perf_counter()
-            result = function(*args, **kwargs)
-            end = time.perf_counter()
-            self.log(time_log_format % {
-                "name": function.__name__,
-                "time": end-start,
-                "time_ms": (end-start)*1000,
-                "start_time": start,
-                "end_time": end
-            }, loglevel)
-            return result
-        return decorated_function
+        def decorator(function):
+            def decorated_function(*args, **kwargs):
+                start = time.perf_counter()
+                result = function(*args, **kwargs)
+                end = time.perf_counter()
+                self.log(time_log_format % {
+                    "name": function.__name__,
+                    "time": end-start,
+                    "time_ms": (end-start)*1000,
+                    "start_time": start,
+                    "end_time": end
+                }, loglevel)
+                return result
+            return decorated_function(decorated_function)
+        return decorator
 
     def run_and_time(self, function, *args, **kwargs):
         """Run and time the given function"""
-        return self.time(function)(*args, **kwargs)
+        return self.time()(function)(*args, **kwargs)
 
     def level_num_to_name(self, num):
         """Returns the name of the given level"""
