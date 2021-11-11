@@ -65,14 +65,14 @@ class Logger:
         data["name"] = self.name
         data["time"] = time.time()
         time_struct = time.localtime()
-        data["asctime"] = "{}-{}-{} {}:{}:{},{:.3f}".format(
+        data["asctime"] = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d},{:03d}".format(
             time_struct.tm_year,
             time_struct.tm_mon,
             time_struct.tm_mday,
             time_struct.tm_hour,
             time_struct.tm_min,
             time_struct.tm_sec,
-            time.time() % 1
+            round(time.time() % 1 * 1000)
         )
 
         # Track errors, then display them later
