@@ -14,5 +14,5 @@ drive_base = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=12
 ev3 = EV3Brick()
 
 # Constants
-SPEED = 10
+SPEED = 50
 DRAWING_LEN = 600
