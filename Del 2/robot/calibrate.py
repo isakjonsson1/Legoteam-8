@@ -1,11 +1,11 @@
 #!/usr/bin/env pybricks-micropython
 """Functions used to calibrate the robot"""
-from config import drive_base
+from config import drive_base, pen_motor
+from pybricks.parameters import Stop
 
 
 def main():
     """Start function"""
-    square(100)
 
 
 def square(length):
@@ -29,6 +29,16 @@ def drive(length):
 def threesixty():
     """Turns 360 degrees"""
     drive_base.turn(360)
+
+
+def engage_pen():
+    """Puts the pen on the paper"""
+    pen_motor.run_target(100, -360, then=Stop.HOLD, wait=True)
+
+
+def lift_pen():
+    """Lifts the pen from the paper"""
+    pen_motor.run_target(100, -270, then=Stop.HOLD, wait=True)
 
 
 if __name__ == "__main__":
