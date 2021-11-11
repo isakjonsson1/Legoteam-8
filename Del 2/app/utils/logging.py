@@ -113,7 +113,7 @@ class Logger:
                     "end_time": end
                 }, loglevel)
                 return result
-            return decorated_function(decorated_function)
+            return decorated_function
         return decorator
 
     def run_and_time(self, function, *args, **kwargs):
