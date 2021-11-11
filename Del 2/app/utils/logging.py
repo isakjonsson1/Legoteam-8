@@ -27,7 +27,7 @@ class Logger:
     def __init__(self, 
                  name=__name__,
                  outputs={ sys.stdout: 10, open("latest.log", "a"): 20 },
-                 log_format="%(asctime)s |:| %(name)s:%(levelname)-7s |:| %(message)s",
+                 log_format="%(asctime)s |:| %(name)s:%(levelname)-8s |:| %(message)s",
                  silent_log_errors=True):
         self.name = name
         self.outputs = outputs
