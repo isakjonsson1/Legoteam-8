@@ -5,7 +5,6 @@ from app.abc import Curve
 from app.arc.arc import Arc
 from app.point import Point
 from app.svg import Path
-from config import logger
 
 
 def parse_svg(svg_file_name):
