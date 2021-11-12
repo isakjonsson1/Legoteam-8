@@ -55,26 +55,20 @@ def main():
     print("All paths completed.")
 
 
-def plot():
+def plot(file_names=("Mediamodifier-Design", "arc_test1", "arc_test2", "smiley")):
     """Used to plot example files"""
     from app.utils import plotting  # pylint: disable=import-outside-toplevel
     import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
 
+    if len(file_names) > 4:
+        print("Warning: This application only supports 4 plots at a time (max)")
+
     img_paths = [
-        r"app\svg\sample_svgs\Mediamodifier-Design.svg",
-        r"app\svg\sample_svgs\arc_test1.svg",
-        r"app\svg\sample_svgs\arc_test2.svg",
-        r"app\svg\sample_svgs\smiley.svg",
+        "app/svg/sample_svgs/{}.svg".format(file_name) for file_name in file_names
     ]
+    names = [file_name + ".svg" for file_name in file_names]
+    svgs = [parse_svg(path) for path in img_paths[:4]]
 
-    names = [
-        "Mediamodifier-Design.svg",
-        "arc_test1.svg",
-        "arc_test2.svg",
-        "smiley.svg",
-    ]
-
-    svgs = [parse_svg(path) for path in img_paths]
     _, axs = plt.subplots(2, 2)
     for i, coords in enumerate([(0, 0), (0, 1), (1, 0), (1, 1)]):
         plot_square = axs[coords[0], coords[1]]
@@ -85,12 +79,12 @@ def plot():
     plotting.show()
 
 
-def turtle():
+def turtle(file_name="smiley"):
     """Used to simulate the way the robot would drive through an svg file"""
     from turtle_sim import Turtle  # pylint: disable=import-outside-toplevel
 
     print("Parsing SVG-file")
-    paths = parse_svg("app/svg/sample_svgs/smiley.svg")
+    paths = parse_svg("app/svg/sample_svgs/{}.svg".format(file_name))
 
     # Debugging
     print("File fully parsed.")
@@ -131,8 +125,15 @@ if __name__ == "__main__":
         sys.exit(pytest.main(["-x", "tests"]))
 
     if len(sys.argv) > 1 and sys.argv[1] == "plot":
-        plot()
-        sys.exit()
+        try:
+            if len(sys.argv) > 2:
+                plot(file_names=sys.argv[2:])
+            else:
+                plot()
+        except FileNotFoundError as e:
+            print(e)
+        finally:
+            sys.exit()
 
     if len(sys.argv) > 1 and sys.argv[1] == "profile":
         import cProfile  # pylint: disable=import-outside-toplevel
@@ -146,8 +147,15 @@ if __name__ == "__main__":
         sys.exit()
 
     if len(sys.argv) > 1 and sys.argv[1] == "turtle":
-        turtle()
-        input("Press enter to exit..")
-        sys.exit()
+        try:
+            if len(sys.argv) > 2:
+                turtle(file_name=sys.argv[2])
+            else:
+                turtle()
+            input("Press enter to exit..")
+        except FileNotFoundError as e:
+            print(e)
+        finally:
+            sys.exit()
 
     main()
