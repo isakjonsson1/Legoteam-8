@@ -56,7 +56,11 @@ def main():
 
 
 def plot(file_names=("Mediamodifier-Design", "arc_test1", "arc_test2", "smiley")):
-    """Used to plot example files"""
+    """
+    Used to plot svg files using the matplotlib library.
+
+    Filenames can be specified to indicate what files you want plotted.
+    """
     from app.utils import plotting  # pylint: disable=import-outside-toplevel
     import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
 
@@ -80,7 +84,13 @@ def plot(file_names=("Mediamodifier-Design", "arc_test1", "arc_test2", "smiley")
 
 
 def turtle(file_name="smiley"):
-    """Used to simulate the way the robot would drive through an svg file"""
+    """
+    Used to simulate the way the robot would drive through
+    an svg file using the turtle library
+
+    A filename can be given to specify which file in the svg/sample_svgs
+    you want to simulate
+    """
     from turtle_sim import Turtle  # pylint: disable=import-outside-toplevel
 
     print("Parsing SVG-file")
@@ -118,11 +128,55 @@ def turtle(file_name="smiley"):
     print("All paths completed.")
 
 
+def profile(file_name="Mediamodifier-Design"):
+    """
+    Used to profile the parse_svg function on an svg file using cProfile and snakeviz.
+
+    The file can be manually specified.
+    """
+    import cProfile  # pylint: disable=import-outside-toplevel
+    import os  # pylint: disable=import-outside-toplevel
+
+    profile = cProfile.Profile()
+    profile.runcall(parse_svg, "app/svg/sample_svgs/{}.svg".format(file_name))
+    profile.dump_stats("latest.log")
+
+    os.system('"{}" -m snakeviz latest.log'.format(sys.executable))
+
+
+def test():
+    """
+    Used to run the tests
+
+    Returns an exit code
+    """
+    import pytest  # pylint: disable=import-outside-toplevel
+
+    return pytest.main(["-x", "tests"])
+
+
+def help(func_name=None):
+    """
+    Used to relay information about the different CLI commands
+    to the user.
+    """
+    funcs = [plot, turtle, profile, test, help]
+    if func_name is None:
+        for func in funcs:
+            print("\n{}: {}".format(func.__name__, func.__doc__))
+        return
+
+    for func in funcs:
+        if func_name == func.__name__:
+            print("\n{}: {}".format(func.__name__, func.__doc__))
+            return
+
+    print("The command {} does not exist".format(func_name))
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "test":
-        import pytest  # pylint: disable=import-outside-toplevel
-
-        sys.exit(pytest.main(["-x", "tests"]))
+        sys.exit(test())
 
     if len(sys.argv) > 1 and sys.argv[1] == "plot":
         try:
@@ -136,15 +190,15 @@ if __name__ == "__main__":
             sys.exit()
 
     if len(sys.argv) > 1 and sys.argv[1] == "profile":
-        import cProfile  # pylint: disable=import-outside-toplevel
-        import os  # pylint: disable=import-outside-toplevel
-
-        profile = cProfile.Profile()
-        profile.runcall(parse_svg, "app/svg/sample_svgs/Mediamodifier-Design.svg")
-        profile.dump_stats("latest.log")
-
-        os.system("{} -m snakeviz latest.log".format(sys.executable))
-        sys.exit()
+        try:
+            if len(sys.argv) > 2:
+                profile(file_name=sys.argv[2])
+            else:
+                profile()
+        except FileNotFoundError as e:
+            print(e)
+        finally:
+            sys.exit()
 
     if len(sys.argv) > 1 and sys.argv[1] == "turtle":
         try:
@@ -157,5 +211,12 @@ if __name__ == "__main__":
             print(e)
         finally:
             sys.exit()
+
+    if len(sys.argv) > 1 and sys.argv[1] == "help":
+        if len(sys.argv) > 2:
+            help(func_name=sys.argv[2])
+        else:
+            help()
+        sys.exit()
 
     main()
