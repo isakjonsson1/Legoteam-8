@@ -137,9 +137,9 @@ def profile(file_name="Mediamodifier-Design"):
     import cProfile  # pylint: disable=import-outside-toplevel
     import os  # pylint: disable=import-outside-toplevel
 
-    profile = cProfile.Profile()
-    profile.runcall(parse_svg, "app/svg/sample_svgs/{}.svg".format(file_name))
-    profile.dump_stats("latest.log")
+    profiler = cProfile.Profile()
+    profiler.runcall(parse_svg, "app/svg/sample_svgs/{}.svg".format(file_name))
+    profiler.dump_stats("latest.log")
 
     os.system('"{}" -m snakeviz latest.log'.format(sys.executable))
 
@@ -155,7 +155,7 @@ def test():
     return pytest.main(["-x", "tests"])
 
 
-def help(func_name=None):
+def help(func_name=None):  # pylint: disable=redefined-builtin
     """
     Used to relay information about the different CLI commands
     to the user.
