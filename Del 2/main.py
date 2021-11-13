@@ -1,17 +1,20 @@
 #!/usr/bin/env pybricks-micropython
 """Entrypoint file"""
 import sys
+import re
 
 from app.svg.parsing import parse_svg
 from app.point import Point
 from robot import Robot
 from robot.config import DRAWING_LEN
 
+SAMPLE_SVGS = "app/svg/sample_svgs/"
+
 
 def main():
     """Program entrypoint - Here comes the main logic"""
     print("Parsing SVG-file")
-    paths = parse_svg("app/svg/sample_svgs/triangle.svg")
+    paths = parse_svg(SAMPLE_SVGS + "triangle.svg")
 
     # Debugging
     print("File fully parsed.")
@@ -55,46 +58,53 @@ def main():
     print("All paths completed.")
 
 
-def plot(file_names=("Mediamodifier-Design", "arc_test1", "arc_test2", "smiley")):
+def plot(
+    file_paths=(
+        SAMPLE_SVGS + "Mediamodifier-Design.svg",
+        SAMPLE_SVGS + "arc_test1.svg",
+        SAMPLE_SVGS + "arc_test2.svg",
+        SAMPLE_SVGS + "smiley.svg",
+    )
+):
     """
     Used to plot svg files using the matplotlib library.
 
-    Filenames can be specified to indicate what files you want plotted.
+    The files can be manually specified by passing the path (relative or absolute)
     """
     from app.utils import plotting  # pylint: disable=import-outside-toplevel
     import matplotlib.pyplot as plt  # pylint: disable=import-outside-toplevel
 
-    if len(file_names) > 4:
+    if len(file_paths) > 4:
         print("Warning: This application only supports 4 plots at a time (max)")
 
-    img_paths = [
-        "app/svg/sample_svgs/{}.svg".format(file_name) for file_name in file_names
+    plot_names = [
+        re.search(r"(?:\\|\/)([^\\\/]*)\.svg$", file_path).group(1)
+        for file_path in file_paths
     ]
-    names = [file_name + ".svg" for file_name in file_names]
-    svgs = [parse_svg(path) for path in img_paths[:4]]
+
+    svgs = [parse_svg(path) for path in file_paths[:4]]
 
     _, axs = plt.subplots(2, 2)
     for i, coords in enumerate([(0, 0), (0, 1), (1, 0), (1, 1)]):
         plot_square = axs[coords[0], coords[1]]
         for path in svgs[i]:
-            plot_square.set_title(names[i])
+            plot_square.set_title(plot_names[i])
             plotting.plot_path(path, plot_square)
 
     plotting.show()
 
 
-def turtle(file_name="smiley"):
+def turtle(file_path=SAMPLE_SVGS + "smiley.svg"):
     """
     Used to simulate the way the robot would drive through
     an svg file using the turtle library
 
-    A filename can be given to specify which file in the svg/sample_svgs
-    you want to simulate
+    The file can be manually specified by passing the path (relative or absolute)
     """
     from turtle_sim import Turtle  # pylint: disable=import-outside-toplevel
 
     print("Parsing SVG-file")
-    paths = parse_svg("app/svg/sample_svgs/{}.svg".format(file_name))
+    paths = parse_svg(file_path)
 
     # Debugging
     print("File fully parsed.")
@@ -128,17 +138,17 @@ def turtle(file_name="smiley"):
     print("All paths completed.")
 
 
-def profile(file_name="Mediamodifier-Design"):
+def profile(file_path=SAMPLE_SVGS + "Mediamodifier-Design.svg"):
     """
     Used to profile the parse_svg function on an svg file using cProfile and snakeviz.
 
-    The file can be manually specified.
+    The file can be manually by passing the path (relative or absolute)
     """
     import cProfile  # pylint: disable=import-outside-toplevel
     import os  # pylint: disable=import-outside-toplevel
 
     profiler = cProfile.Profile()
-    profiler.runcall(parse_svg, "app/svg/sample_svgs/{}.svg".format(file_name))
+    profiler.runcall(parse_svg, file_path)
     profiler.dump_stats("latest.log")
 
     os.system('"{}" -m snakeviz latest.log'.format(sys.executable))
@@ -181,36 +191,33 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "plot":
         try:
             if len(sys.argv) > 2:
-                plot(file_names=sys.argv[2:])
+                plot(file_paths=sys.argv[2:])
             else:
                 plot()
         except FileNotFoundError as e:
             print(e)
-        finally:
-            sys.exit()
+        sys.exit()
 
     if len(sys.argv) > 1 and sys.argv[1] == "profile":
         try:
             if len(sys.argv) > 2:
-                profile(file_name=sys.argv[2])
+                profile(file_path=sys.argv[2])
             else:
                 profile()
         except FileNotFoundError as e:
             print(e)
-        finally:
-            sys.exit()
+        sys.exit()
 
     if len(sys.argv) > 1 and sys.argv[1] == "turtle":
         try:
             if len(sys.argv) > 2:
-                turtle(file_name=sys.argv[2])
+                turtle(file_path=sys.argv[2])
             else:
                 turtle()
             input("Press enter to exit..")
         except FileNotFoundError as e:
             print(e)
-        finally:
-            sys.exit()
+        sys.exit()
 
     if len(sys.argv) > 1 and sys.argv[1] == "help":
         if len(sys.argv) > 2:
