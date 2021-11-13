@@ -1,2 +1,2 @@
 python -m pip install -r requirements.txt
-python run.py test  
+python main.py test  

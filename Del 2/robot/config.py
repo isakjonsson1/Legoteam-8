@@ -4,6 +4,7 @@ from pybricks.ev3devices import Motor
 from pybricks.parameters import Direction, Port
 from pybricks.robotics import DriveBase
 
+
 # Motors and drive base
 pen_motor = Motor(port=Port.D, positive_direction=Direction.CLOCKWISE)
 left_motor = Motor(port=Port.A)
