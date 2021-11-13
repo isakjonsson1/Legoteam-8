@@ -14,7 +14,7 @@ SAMPLE_SVGS = "app/svg/sample_svgs/"
 
 def main():
     """Program entrypoint - Here comes the main logic"""
-    
+
     logger.debug("Parsing SVG-file")
     paths = parse_svg(SAMPLE_SVGS + "triangle.svg")
 
@@ -31,10 +31,14 @@ def main():
     max_y = max(path.max_position.y for path in paths)
 
     logger.debug("Found min and max positions of the paths")
-    logger.debug("The max point is ({}, {}) ".format(max_x, max_y) +
-                 "and the min point is ({}, {})".format(min_x, min_y))
+    logger.debug(
+        "The max point is ({}, {}) ".format(max_x, max_y)
+        + "and the min point is ({}, {})".format(min_x, min_y)
+    )
 
-    logger.debug("The scale is: {:.3f}".format(DRAWING_LEN / max(max_x - min_x, max_y - min_y)))
+    logger.debug(
+        "The scale is: {:.3f}".format(DRAWING_LEN / max(max_x - min_x, max_y - min_y))
+    )
     logger.debug("Initializing robot...")
     logger.debug("Check pen motor if initializing does not work")
 
@@ -51,6 +55,7 @@ def main():
         logger.run_and_time(robot.drive_through_path(path, drawing=True))
 
     logger.debug("All paths completed.")
+
 
 def plot(
     file_paths=(
