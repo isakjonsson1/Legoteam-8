@@ -263,7 +263,7 @@ def extract_arc_data(inp, path, relative):
 def _parse_command_input(command_input):
     """Parses command inputs and returns a list of floats"""
     # Finds a number
-    pattern = r"\-?\.?(?:(?:(?<=\.)\d+(?:e\d+)?)|(?:(?<!\.)\d+(?:\.?\d+(?:e\-?\d+)?)?))"
+    pattern = r"\-?\.?(?:(?:(?<=\.)\d+(?:e\d+)?)|(?:(?<!\.)\d+(?:\.?\d+(?:e\-?\d+)?)?))" # wtf?
     result = re.findall(pattern, command_input)
 
     if len(result) == 0:

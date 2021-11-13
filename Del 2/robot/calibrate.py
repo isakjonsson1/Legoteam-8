@@ -1,7 +1,7 @@
 #!/usr/bin/env pybricks-micropython
 """Functions used to calibrate the robot"""
-from config import drive_base, pen_motor
 from pybricks.parameters import Stop
+from config import drive_base, pen_motor
 
 
 def main():
