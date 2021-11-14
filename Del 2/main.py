@@ -86,9 +86,13 @@ def plot(
     _, axs = plt.subplots(2, 2)
     for i, coords in enumerate([(0, 0), (0, 1), (1, 0), (1, 1)]):
         plot_square = axs[coords[0], coords[1]]
-        for path in svgs[i]:
-            plot_square.set_title(plot_names[i])
-            plotting.plot_path(path, plot_square)
+        try:
+            for path in svgs[i]:
+                plot_square.set_title(plot_names[i])
+                plotting.plot_path(path, plot_square)
+        except IndexError:
+            # Less than 4 plots
+            break
 
     plotting.show()
 
