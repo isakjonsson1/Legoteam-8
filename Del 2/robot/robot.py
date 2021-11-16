@@ -8,7 +8,7 @@ from app.curves import Line
 from robot.config import drive_base, pen_motor, TURN_SPEED, TURN_RATE, PEN_TORQUE, SPEED
 
 
-class Robot:
+class Robot:  # pylint: disable=too-many-instance-attributes
     """
     Keeps track of where the robot is and what angle it is rotated.
 
@@ -36,9 +36,14 @@ class Robot:
         self.scale = scale
         self.angle = start_angle
         self.pos = start_pos
-        self.drive_base = _drive_base
+
         # True if drivebase is Turtle
         self.turtle = not isinstance(_drive_base, type(drive_base))
+        # Fale if True if pen is lowered, False if not
+        # Gets overwritten by self.calibrate_pen
+        self.pen_state = False
+
+        self.drive_base = _drive_base
         self.pen_motor = _pen_motor
         self.calibrate_pen()
 
@@ -62,7 +67,9 @@ class Robot:
             return
 
         if not self.pen_state:
-            self.pen_motor.run_target(TURN_SPEED, self.lower_angle, then=Stop.COAST, wait=True)
+            self.pen_motor.run_target(
+                TURN_SPEED, self.lower_angle, then=Stop.COAST, wait=True
+            )
 
         self.pen_state = True
 
@@ -70,8 +77,8 @@ class Robot:
         """Used to calibrate the pen"""
         print("Lowering pen")
         self.lower_angle = self.pen_motor.run_until_stalled(
-                TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE
-            )
+            TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE
+        )
         self.pen_state = True
         self.lift_pen()
 
