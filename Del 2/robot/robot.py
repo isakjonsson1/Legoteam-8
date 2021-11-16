@@ -42,7 +42,7 @@ class Robot:
     def lift_pen(self):
         """Lifts the pen from the paper"""
         if self.pen_state:
-            self.pen_motor.run_angle(TURN_SPEED, TURN_RATE, then=Stop.HOLD, wait=True)
+            self.pen_motor.run_angle(TURN_SPEED, -TURN_RATE, then=Stop.HOLD, wait=True)
 
         self.pen_state = False
 
