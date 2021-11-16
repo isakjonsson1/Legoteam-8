@@ -5,11 +5,11 @@ from robot import Robot
 
 bot = Robot(scale=1)
 
-finished = False
 
 def main():
     """Start function"""
     threesixty()
+
 
 def square(length):
     """Makes the robot drive in a square with sides length milimeters long"""
@@ -31,6 +31,7 @@ def drive(length):
 def threesixty():
     """Turns 360 degrees"""
     bot.drive_base.turn(360)
+
 
 if __name__ == "__main__":
     main()
