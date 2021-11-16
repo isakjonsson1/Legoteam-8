@@ -11,7 +11,7 @@ finished = False
 def main():
     """Start function"""
     global finished
-    print_thread = thread.start_new_thread(print_angle)
+    # print_thread = thread.start_new_thread(print_angle, (), {})
     bot.calibrate_pen()
     finished = True
 

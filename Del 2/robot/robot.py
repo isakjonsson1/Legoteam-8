@@ -44,17 +44,19 @@ class Robot:
 
     def lift_pen(self):
         """Lifts the pen from the paper"""
+        print("lifting pen")
         if self.turtle:
             self.drive_base.penup()
             return
 
         if self.pen_state:
-            self.pen_motor.run_angle(TURN_SPEED, TURN_RATE, then=Stop.HOLD, wait=True)
+            self.pen_motor.run_angle(TURN_SPEED, -TURN_RATE, then=Stop.HOLD, wait=True)
 
         self.pen_state = False
 
     def engage_pen(self):
         """Puts the pen on the paper"""
+        print("Engage")
         if self.turtle:
             self.drive_base.pendown()
             return
@@ -106,6 +108,7 @@ class Robot:
 
             curvature = curve.get_curvature(t_param)
             self.drive_base.drive(SPEED, math.degrees(SPEED * curvature / self.scale))
+        self.drive_base.stop()
 
         # Updates params
         self.angle = curve.get_end_angle()

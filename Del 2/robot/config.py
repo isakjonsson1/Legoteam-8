@@ -20,6 +20,6 @@ DRAWING_LEN = 600
 
 #pen_motor
 TURN_SPEED = 100
-TURN_RATE = 360
+TURN_RATE = 300
 #Torque in percent
-PEN_TORQUE = 30
+PEN_TORQUE = 50

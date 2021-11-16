@@ -6,15 +6,17 @@ import re
 from app.svg.parsing import parse_svg
 from app.point import Point
 from robot import Robot
-from robot.calibrate import calibrate_pen
 from robot.config import DRAWING_LEN
 
 SAMPLE_SVGS = "app/svg/sample_svgs/"
 
 
 def main():
-
     """Program entrypoint - Here comes the main logic"""
+
+    # from robot import calibrate
+    # calibrate.main()
+    # return
 
     print("Parsing SVG-file")
     paths = parse_svg(SAMPLE_SVGS + "triangle.svg")
