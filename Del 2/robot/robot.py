@@ -5,7 +5,7 @@ from pybricks.parameters import Stop
 
 from app.point import Point
 from app.curves import Line
-from robot.config import *
+from robot.config import drive_base, pen_motor, TURN_SPEED, TURN_RATE, PEN_TORQUE, SPEED
 
 
 class Robot:
@@ -40,6 +40,7 @@ class Robot:
         # True if drivebase is Turtle
         self.turtle = not isinstance(_drive_base, type(drive_base))
         self.pen_motor = _pen_motor
+        self.pen_state = True
 
     def lift_pen(self):
         """Lifts the pen from the paper"""
@@ -59,15 +60,19 @@ class Robot:
             return
 
         if not self.pen_state:
-            self.pen_motor.run_until_stalled(TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE)
+            self.pen_motor.run_until_stalled(
+                TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE
+            )
 
         self.pen_state = True
 
     def calibrate_pen(self):
-        self.pen_motor.run_until_stalled(TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE)
+        """Used to calibrate the pen and test functionality"""
+        self.pen_motor.run_until_stalled(
+            TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE
+        )
         self.pen_motor.run_angle(TURN_SPEED, -TURN_RATE, then=Stop.COAST, wait=True)
         self.pen_state = False
-
 
     def drive_through_path(self, path, drawing=True):
         """Drives through a given path"""
