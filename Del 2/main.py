@@ -14,10 +14,6 @@ SAMPLE_SVGS = "app/svg/sample_svgs/"
 def main():
     """Program entrypoint - Here comes the main logic"""
 
-    # from robot import calibrate
-    # calibrate.main()
-    # return
-
     print("Parsing SVG-file")
     paths = parse_svg(SAMPLE_SVGS + "triangle.svg")
 
@@ -42,20 +38,16 @@ def main():
     print(
         "The scale is: {:.3f}".format(DRAWING_LEN / max(max_x - min_x, max_y - min_y))
     )
+
     print("Initializing robot...")
     print("Check pen motor if initializing does not work")
-
     robot = Robot(
         scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
         start_pos=Point(min_x, min_y),
     )
+    print("Done.")
 
-    print("Done.")
-    print("Calibratin pen")
-    robot.calibrate_pen()
-    print("Done.")
     print("Driving through paths...")
-
     for i, path in enumerate(paths):
         print("Driving through path {}".format(i))
         robot.drive_through_path(path, drawing=True)

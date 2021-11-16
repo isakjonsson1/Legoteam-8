@@ -1,6 +1,5 @@
 #!/usr/bin/env pybricks-micropython
 """Functions used to calibrate the robot"""
-import _thread as thread
 
 from robot import Robot
 
@@ -10,16 +9,7 @@ finished = False
 
 def main():
     """Start function"""
-    global finished
-    # print_thread = thread.start_new_thread(print_angle, (), {})
-    bot.calibrate_pen()
-    finished = True
-
-def print_angle():
-    global finished
-    angle = bot.pen_motor.angle()
-    while not finished:
-        print("Angle: {}".format(angle), end="\r")
+    threesixty()
 
 def square(length):
     """Makes the robot drive in a square with sides length milimeters long"""
