@@ -9,6 +9,7 @@ from robot.config import DRAWING_LEN
 
 
 def main():
+
     """Program entrypoint - Here comes the main logic"""
     print("Parsing SVG-file")
     paths = parse_svg("app/svg/sample_svgs/triangle.svg")
@@ -44,7 +45,9 @@ def main():
         scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
         start_pos=Point(min_x, min_y),
     )
-
+    print("Done.")
+    print("Calibrating pen...")
+    robot.calibrate_pen()
     print("Done.")
     print("Driving through paths...")
 

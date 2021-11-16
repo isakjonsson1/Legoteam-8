@@ -39,9 +39,6 @@ class Robot:
         self.drive_base = _drive_base
         self.pen_motor = _pen_motor
 
-        self.pen_state = True
-        self.lift_pen()
-
     def lift_pen(self):
         """Lifts the pen from the paper"""
         if self.pen_state:
@@ -55,6 +52,12 @@ class Robot:
             self.pen_motor.run_until_stalled(TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE)
 
         self.pen_state = True
+
+    def calibrate_pen(self):
+        self.pen_motor.run_until_stalled(TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE)
+        self.pen_motor.run_angle(TURN_SPEED, -TURN_RATE, then=Stop.COAST, wait=True)
+        self.pen_state = False
+
 
     def drive_through_path(self, path, drawing=True):
         """Drives through a given path"""
