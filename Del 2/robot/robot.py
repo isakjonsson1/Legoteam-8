@@ -37,10 +37,16 @@ class Robot:
         self.angle = start_angle
         self.pos = start_pos
         self.drive_base = _drive_base
+        # True if drivebase is Turtle
+        self.turtle = not isinstance(_drive_base, type(drive_base))
         self.pen_motor = _pen_motor
 
     def lift_pen(self):
         """Lifts the pen from the paper"""
+        if self.turtle:
+            self.drive_base.penup()
+            return
+
         if self.pen_state:
             self.pen_motor.run_angle(TURN_SPEED, -TURN_RATE, then=Stop.HOLD, wait=True)
 
@@ -48,6 +54,10 @@ class Robot:
 
     def engage_pen(self):
         """Puts the pen on the paper"""
+        if self.turtle:
+            self.drive_base.pendown()
+            return
+
         if not self.pen_state:
             self.pen_motor.run_until_stalled(TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE)
 

@@ -76,7 +76,10 @@ class Arc(NonLinearCurve):
         where 0 is the start of the curve and 1 is the end of the curve.
         """
         angle = self._start_angle + t_param * self._angle_delta
-        point = Point(-self.radii.x * math.sin(angle), self.radii.y * math.cos(angle))
+        point = Point(
+            -self._angle_delta * self.radii.x * math.sin(angle),
+            self._angle_delta * self.radii.y * math.cos(angle),
+        )
 
         if self.rotation:
             point = point.rotated(self.rotation)
@@ -89,7 +92,10 @@ class Arc(NonLinearCurve):
         where 0 is the start of the curve and 1 is the end of the curve.
         """
         angle = self._start_angle + t_param * self._angle_delta
-        point = Point(-self.radii.x * math.cos(angle), -self.radii.y * math.sin(angle))
+        point = Point(
+            -self._angle_delta ** 2 * self.radii.x * math.cos(angle),
+            -self._angle_delta ** 2 * self.radii.y * math.sin(angle),
+        )
 
         if self.rotation:
             point = point.rotated(self.rotation)
