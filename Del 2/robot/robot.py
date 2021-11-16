@@ -40,7 +40,7 @@ class Robot:
         # True if drivebase is Turtle
         self.turtle = not isinstance(_drive_base, type(drive_base))
         self.pen_motor = _pen_motor
-        self.pen_state = True
+        self.pen_state = False
 
     def lift_pen(self):
         """Lifts the pen from the paper"""
@@ -49,7 +49,7 @@ class Robot:
             return
 
         if self.pen_state:
-            self.pen_motor.run_angle(TURN_SPEED, -TURN_RATE, then=Stop.HOLD, wait=True)
+            self.pen_motor.run_angle(TURN_SPEED, TURN_RATE, then=Stop.HOLD, wait=True)
 
         self.pen_state = False
 
@@ -68,10 +68,8 @@ class Robot:
 
     def calibrate_pen(self):
         """Used to calibrate the pen and test functionality"""
-        self.pen_motor.run_until_stalled(
-            TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE
-        )
-        self.pen_motor.run_angle(TURN_SPEED, -TURN_RATE, then=Stop.COAST, wait=True)
+        self.engage_pen()
+        self.lift_pen()
         self.pen_state = False
 
     def drive_through_path(self, path, drawing=True):

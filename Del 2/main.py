@@ -6,8 +6,8 @@ import re
 from app.svg.parsing import parse_svg
 from app.point import Point
 from robot import Robot
+from robot.calibrate import calibrate_pen
 from robot.config import DRAWING_LEN
-from config import logger
 
 SAMPLE_SVGS = "app/svg/sample_svgs/"
 
@@ -16,12 +16,12 @@ def main():
 
     """Program entrypoint - Here comes the main logic"""
 
-    logger.debug("Parsing SVG-file")
+    print("Parsing SVG-file")
     paths = parse_svg(SAMPLE_SVGS + "triangle.svg")
 
     # Debugging
-    logger.debug("File fully parsed.")
-    logger.debug("Finding min and max positions of the path...")
+    print("File fully parsed.")
+    print("Finding min and max positions of the path...")
 
     # Finds min position of the paths
     min_x = min(path.min_position.x for path in paths)
@@ -31,31 +31,34 @@ def main():
     max_x = max(path.max_position.x for path in paths)
     max_y = max(path.max_position.y for path in paths)
 
-    logger.debug("Found min and max positions of the paths")
-    logger.debug(
+    print("Found min and max positions of the paths")
+    print(
         "The max point is ({}, {}) ".format(max_x, max_y)
         + "and the min point is ({}, {})".format(min_x, min_y)
     )
 
-    logger.debug(
+    print(
         "The scale is: {:.3f}".format(DRAWING_LEN / max(max_x - min_x, max_y - min_y))
     )
-    logger.debug("Initializing robot...")
-    logger.debug("Check pen motor if initializing does not work")
+    print("Initializing robot...")
+    print("Check pen motor if initializing does not work")
 
     robot = Robot(
         scale=DRAWING_LEN / max(max_x - min_x, max_y - min_y),
         start_pos=Point(min_x, min_y),
     )
 
-    logger.debug("Done.")
-    logger.debug("Driving through paths...")
+    print("Done.")
+    print("Calibratin pen")
+    robot.calibrate_pen()
+    print("Done.")
+    print("Driving through paths...")
 
     for i, path in enumerate(paths):
-        logger.debug("Driving through path {}".format(i))
-        logger.run_and_time(robot.drive_through_path(path, drawing=True))
+        print("Driving through path {}".format(i))
+        robot.drive_through_path(path, drawing=True)
 
-    logger.debug("All paths completed.")
+    print("All paths completed.")
 
 
 def plot(
