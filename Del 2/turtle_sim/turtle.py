@@ -47,6 +47,10 @@ class Turtle:
         """Retuns the driven distance since last self.reset"""
         return self.distance_traveled
 
+    def stop(self):
+        """Stops the turtle (dosnt't actually do anything)"""
+        return
+
     def reset(self):
         """Resets the driven distance."""
         self.distance_traveled = 0

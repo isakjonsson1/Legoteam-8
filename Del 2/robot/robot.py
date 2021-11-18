@@ -39,17 +39,20 @@ class Robot:  # pylint: disable=too-many-instance-attributes
 
         # True if drivebase is Turtle
         self.turtle = not isinstance(_drive_base, type(drive_base))
+
         # Fale if True if pen is lowered, False if not
         # Gets overwritten by self.calibrate_pen
         self.pen_state = False
 
         self.drive_base = _drive_base
         self.pen_motor = _pen_motor
-        self.calibrate_pen()
+
+        # Calibrates pen
+        if not self.turtle:
+            self.calibrate_pen()
 
     def lift_pen(self):
         """Lifts the pen from the paper"""
-        print("lifting pen")
         if self.turtle:
             self.drive_base.penup()
             return
@@ -61,7 +64,6 @@ class Robot:  # pylint: disable=too-many-instance-attributes
 
     def engage_pen(self):
         """Puts the pen on the paper"""
-        print("Engage")
         if self.turtle:
             self.drive_base.pendown()
             return

@@ -129,9 +129,6 @@ def turtle(file_path=SAMPLE_SVGS + "smiley.svg"):
         _pen_motor=None,
     )
     print("Done.")
-    print("Calibrating pen...")
-    robot.calibrate_pen()
-    print("Done.")
     print("Driving through paths...")
 
     for i, path in enumerate(paths):
