@@ -47,7 +47,7 @@ class Turtle:
         """Retuns the driven distance since last self.reset"""
         return self.distance_traveled
 
-    def stop(self):
+    def stop(self):  # pylint: disable=no-self-use
         """Stops the turtle (dosnt't actually do anything)"""
         return
 
