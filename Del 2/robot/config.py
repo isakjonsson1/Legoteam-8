@@ -18,8 +18,9 @@ ev3 = EV3Brick()
 SPEED = 50
 DRAWING_LEN = 600
 
-#pen_motor
+# pen_motor
 TURN_SPEED = 100
 TURN_RATE = 300
-#Torque in percent
-PEN_TORQUE = 32
+
+# Torque in percent
+PEN_TORQUE = 35

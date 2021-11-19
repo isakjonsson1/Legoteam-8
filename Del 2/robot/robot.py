@@ -77,7 +77,6 @@ class Robot:  # pylint: disable=too-many-instance-attributes
 
     def calibrate_pen(self):
         """Used to calibrate the pen"""
-        print("Lowering pen")
         self.lower_angle = self.pen_motor.run_until_stalled(
             TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE
         )
