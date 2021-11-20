@@ -5,10 +5,10 @@ from pybricks.parameters import Stop
 
 from app.point import Point
 from app.curves import Line
-from robot.config import drive_base, pen_motor, SPEED
+from robot.config import drive_base, pen_motor, TURN_SPEED, TURN_RATE, PEN_TORQUE, SPEED
 
 
-class Robot:
+class Robot:  # pylint: disable=too-many-instance-attributes
     """
     Keeps track of where the robot is and what angle it is rotated.
 
@@ -36,13 +36,20 @@ class Robot:
         self.scale = scale
         self.angle = start_angle
         self.pos = start_pos
-        self.drive_base = _drive_base
+
         # True if drivebase is Turtle
         self.turtle = not isinstance(_drive_base, type(drive_base))
+
+        # Fale if True if pen is lowered, False if not
+        # Gets overwritten by self.calibrate_pen
+        self.pen_state = False
+
+        self.drive_base = _drive_base
         self.pen_motor = _pen_motor
 
-        self.pen_state = True
-        self.lift_pen()
+        # Calibrates pen
+        if not self.turtle:
+            self.calibrate_pen()
 
     def lift_pen(self):
         """Lifts the pen from the paper"""
@@ -51,7 +58,7 @@ class Robot:
             return
 
         if self.pen_state:
-            self.pen_motor.run_target(360, 270, then=Stop.HOLD, wait=True)
+            self.pen_motor.run_angle(TURN_SPEED, -TURN_RATE, then=Stop.HOLD, wait=True)
 
         self.pen_state = False
 
@@ -62,9 +69,19 @@ class Robot:
             return
 
         if not self.pen_state:
-            self.pen_motor.run_target(-360, 0, then=Stop.HOLD, wait=True)
+            self.pen_motor.run_target(
+                TURN_SPEED, self.lower_angle, then=Stop.COAST, wait=True
+            )
 
         self.pen_state = True
+
+    def calibrate_pen(self):
+        """Used to calibrate the pen"""
+        self.lower_angle = self.pen_motor.run_until_stalled(
+            TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE
+        )
+        self.pen_state = True
+        self.lift_pen()
 
     def drive_through_path(self, path, drawing=True):
         """Drives through a given path"""
@@ -100,6 +117,7 @@ class Robot:
 
             curvature = curve.get_curvature(t_param)
             self.drive_base.drive(SPEED, math.degrees(SPEED * curvature / self.scale))
+        self.drive_base.stop()
 
         # Updates params
         self.angle = curve.get_end_angle()
