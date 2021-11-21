@@ -1,5 +1,6 @@
 """Contais the QuadraticCurve class"""
 from app.abc import NonLinearCurve
+from app.point.point import Point
 
 
 class QuadraticCurve(NonLinearCurve):
@@ -22,10 +23,13 @@ class QuadraticCurve(NonLinearCurve):
         Returns a position on the curve based a t value [0, 1]
         where 0 is the start of the curve and 1 is the end of the curve.
         """
-        return (
-            self.points[1]
-            + (t_param) ** 2 * (self.compund_point_a)
-            + (1 - t_param) ** 2 * (self.compund_point_b)
+        return Point(
+            self.points[1].x
+            + self.compund_point_a.x * (t_param) ** 2
+            + self.compund_point_b.x * (1 - t_param) ** 2,
+            self.points[1].y
+            + self.compund_point_a.y * (t_param) ** 2
+            + self.compund_point_b.y * (1 - t_param) ** 2,
         )
 
     def get_vel(self, t_param):
@@ -33,9 +37,11 @@ class QuadraticCurve(NonLinearCurve):
         Returns the velocity at a given t value [0, 1] (the first order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
         """
-        return (
-            2 * t_param * self.compund_point_a
-            - 2 * (1 - t_param) * self.compund_point_b
+        return Point(
+            self.compund_point_a.x * (2 * t_param)
+            - self.compund_point_b.x * (-2 * (1 - t_param)),
+            self.compund_point_a.y * (2 * t_param)
+            - self.compund_point_b.y * (-2 * (1 - t_param)),
         )
 
     def get_acc(self, t_param=None):  # pylint: disable=unused-argument
@@ -43,4 +49,4 @@ class QuadraticCurve(NonLinearCurve):
         Returns the acceleration at a given t value [0, 1] (the second order derivative)
         where 0 is the start of the curve and 1 is the end of the curve.
         """
-        return 2 * (self.compund_point_a + self.compund_point_b)
+        return (self.compund_point_a + self.compund_point_b) * 2

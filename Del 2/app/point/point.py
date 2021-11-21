@@ -5,6 +5,8 @@ import math
 class Point:
     """Used to represent a 2d point"""
 
+    __slots__ = ("x", "y")
+
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -21,23 +23,16 @@ class Point:
         return math.sqrt(self.x ** 2 + self.y ** 2)
 
     def __add__(self, other):
-        if isinstance(other, self.__class__):
-            return self.__class__(self.x + other.x, self.y + other.y)
-
-        raise TypeError(
-            f"unsupported operand type(s) for +: '{self.__class__}' and '{type(other)}'"
-        )
+        """adds two points, other must be point"""
+        return self.__class__(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other):
-        return self + (-1) * other
+        """subs two points, other must be point"""
+        return self.__class__(self.x - other.x, self.y - other.y)
 
     def __mul__(self, other):
-        if isinstance(other, (int, float)):
-            return self.__class__(self.x * other, self.y * other)
-
-        raise TypeError(
-            f"unsupported operand type(s) for *: '{self.__class__}' and '{type(other)}'"
-        )
+        """Multiplies self by a number. [other must be a number]"""
+        return self.__class__(self.x * other, self.y * other)
 
     def __rmul__(self, other):
         return self * other
@@ -55,10 +50,10 @@ class Point:
         return self * -1
 
     def __str__(self):
-        return f"({self.x}, {self.y})"
+        return "({}, {})".format(self.x, self.y)
 
     def __repr__(self):
-        return f"{type(self).__name__}(x={self.x}, y={self.y})"
+        return "{}(x={}, y={})".format(type(self).__name__, self.x, self.y)
 
     @staticmethod
     def angle_between(point1, point2):

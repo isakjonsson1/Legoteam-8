@@ -21,6 +21,7 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         cd "Del 2"
-        pylint run.py
+        pylint main.py
         pylint robot
         pylint app
+        pylint turtle_sim

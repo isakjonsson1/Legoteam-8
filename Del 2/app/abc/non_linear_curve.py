@@ -1,5 +1,5 @@
 """Contains the abstract class NonLinearCurve"""
-from numpy import linspace
+import math
 from app.abc import Curve
 
 
@@ -24,16 +24,21 @@ class NonLinearCurve(Curve):
         # Initiates a new dict as an empty look-up table
         look_up_table = {}
 
-        # Samples of t in the interval [0, 1]
-        t_params = linspace(0, 1, number_of_entries + 1)
+        # Samples of t in the interval <0, 1]
+        delta = 1 / number_of_entries
+        t_params = (i * delta for i in range(1, number_of_entries + 1))
 
         traversed_length = 0
         look_up_table[traversed_length] = 0
 
-        last = self.get_pos(t_params[0])
-        for t_param in t_params[1:]:
+        last = self.get_pos(0)
+        for t_param in t_params:
             current = self.get_pos(t_param)
-            step_length = abs(current - last)
+
+            step_length = math.sqrt(
+                (current.x - last.x) ** 2 + (current.y - last.y) ** 2
+            )
+
             last = current
             traversed_length += step_length
             look_up_table[traversed_length] = t_param

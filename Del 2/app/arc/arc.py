@@ -64,7 +64,11 @@ class Arc(NonLinearCurve):
         """
         angle = self._start_angle + t_param * self._angle_delta
         point = Point(self.radii.x * math.cos(angle), self.radii.y * math.sin(angle))
-        return point.rotated(self.rotation) + self.center
+
+        if self.rotation:
+            point = point.rotated(self.rotation)
+
+        return point + self.center
 
     def get_vel(self, t_param):
         """
@@ -72,8 +76,15 @@ class Arc(NonLinearCurve):
         where 0 is the start of the curve and 1 is the end of the curve.
         """
         angle = self._start_angle + t_param * self._angle_delta
-        point = Point(-self.radii.x * math.sin(angle), self.radii.y * math.cos(angle))
-        return point.rotated(self.rotation)
+        point = Point(
+            -self._angle_delta * self.radii.x * math.sin(angle),
+            self._angle_delta * self.radii.y * math.cos(angle),
+        )
+
+        if self.rotation:
+            point = point.rotated(self.rotation)
+
+        return point
 
     def get_acc(self, t_param):
         """
@@ -81,8 +92,15 @@ class Arc(NonLinearCurve):
         where 0 is the start of the curve and 1 is the end of the curve.
         """
         angle = self._start_angle + t_param * self._angle_delta
-        point = Point(-self.radii.x * math.cos(angle), -self.radii * math.sin(angle))
-        return point.rotated(self.rotation)
+        point = Point(
+            -self._angle_delta ** 2 * self.radii.x * math.cos(angle),
+            -self._angle_delta ** 2 * self.radii.y * math.sin(angle),
+        )
+
+        if self.rotation:
+            point = point.rotated(self.rotation)
+
+        return point
 
     @staticmethod
     def calc_helper(start_pos, end_pos, rotation):
@@ -172,9 +190,9 @@ class Arc(NonLinearCurve):
         point2.x /= radii.x
         point2.y /= radii.y
 
-        angle_delta = Point.angle_between(point1, point2) % math.tau
+        angle_delta = Point.angle_between(point1, point2) % (math.pi * 2)
 
         if sweep:
-            angle_delta -= math.tau
+            angle_delta -= math.pi * 2
 
         return angle_delta

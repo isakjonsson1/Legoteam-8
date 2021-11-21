@@ -5,10 +5,10 @@ from pybricks.parameters import Stop
 
 from app.point import Point
 from app.curves import Line
-from robot.config import drive_base, pen_motor, SPEED
+from robot.config import drive_base, pen_motor, TURN_SPEED, TURN_RATE, PEN_TORQUE, SPEED
 
 
-class Robot:
+class Robot:  # pylint: disable=too-many-instance-attributes
     """
     Keeps track of where the robot is and what angle it is rotated.
 
@@ -36,36 +36,88 @@ class Robot:
         self.scale = scale
         self.angle = start_angle
         self.pos = start_pos
+
+        # True if drivebase is Turtle
+        self.turtle = not isinstance(_drive_base, type(drive_base))
+
+        # Fale if True if pen is lowered, False if not
+        # Gets overwritten by self.calibrate_pen
+        self.pen_state = False
+
         self.drive_base = _drive_base
         self.pen_motor = _pen_motor
 
+        # Calibrates pen
+        if not self.turtle:
+            self.calibrate_pen()
+
     def lift_pen(self):
         """Lifts the pen from the paper"""
-        self.pen_motor.run_target(360, 270, then=Stop.HOLD, wait=True)
+        if self.turtle:
+            self.drive_base.penup()
+            return
+
+        if self.pen_state:
+            self.pen_motor.run_angle(TURN_SPEED, -TURN_RATE, then=Stop.HOLD, wait=True)
+
+        self.pen_state = False
 
     def engage_pen(self):
         """Puts the pen on the paper"""
-        self.pen_motor.run_target(-360, 0, then=Stop.HOLD, wait=True)
+        if self.turtle:
+            self.drive_base.pendown()
+            return
 
-    def drive_through_path(self, path):
+        if not self.pen_state:
+            self.pen_motor.run_target(
+                TURN_SPEED, self.lower_angle, then=Stop.COAST, wait=True
+            )
+
+        self.pen_state = True
+
+    def calibrate_pen(self):
+        """Used to calibrate the pen"""
+        self.lower_angle = self.pen_motor.run_until_stalled(
+            TURN_SPEED, then=Stop.COAST, duty_limit=PEN_TORQUE
+        )
+        self.pen_state = True
+        self.lift_pen()
+
+    def drive_through_path(self, path, drawing=True):
         """Drives through a given path"""
         for curve in path:
-            self.drive_through_curve(curve)
+            self.drive_through_curve(curve, drawing=drawing)
 
-    def drive_through_curve(self, curve):
+    def drive_through_curve(self, curve, drawing=True):
         """
         Drives the robot to the start position of the curve and drives through it.
         """
+        self.lift_pen()
         # Moves the robot
         self.move_to(curve.get_start_pos())
         self.change_angle(curve.get_start_angle())
 
+        if drawing:
+            self.engage_pen()
+
         # Follows the curve
         self.drive_base.reset()
-        while self.drive_base.distance() < curve.length() * self.scale:
-            t_param = curve.get_t(self.drive_base.distance() / self.scale)
-            curve = curve.get_curvature(t_param)
-            self.drive_base.drive(SPEED, math.degrees(SPEED * curve / self.scale))
+        while (
+            self.drive_base.distance() is None and curve.length() != 0
+        ) or self.drive_base.distance() < curve.length() * self.scale:
+
+            distance = self.drive_base.distance()
+            if distance is None:
+                distance = 0
+
+            try:
+                t_param = curve.get_t(distance / self.scale)
+            except ValueError:
+                break
+
+            curvature = curve.get_curvature(t_param)
+            self.drive_base.drive(SPEED, math.degrees(SPEED * curvature / self.scale))
+        self.drive_base.stop()
 
         # Updates params
         self.angle = curve.get_end_angle()
@@ -92,7 +144,7 @@ class Robot:
         """
         Turns the robot in the direction specified by the end_angle (in radians).
         """
-        angle_delta = (((end_angle - self.angle) + math.pi) % math.tau) - math.pi
+        angle_delta = ((end_angle - self.angle) + math.pi) % (math.pi * 2) - math.pi
         self.drive_base.turn(math.degrees(angle_delta))
 
         # Update params
