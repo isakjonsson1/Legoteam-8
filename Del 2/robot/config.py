@@ -9,7 +9,7 @@ from pybricks.robotics import DriveBase
 pen_motor = Motor(port=Port.D, positive_direction=Direction.CLOCKWISE)
 left_motor = Motor(port=Port.A)
 right_motor = Motor(port=Port.B)
-drive_base = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=128)
+drive_base = DriveBase(left_motor, right_motor, wheel_diameter=56, axle_track=130)
 
 # ev3
 ev3 = EV3Brick()
@@ -23,4 +23,4 @@ TURN_SPEED = 100
 TURN_RATE = 300
 
 # Torque in percent
-PEN_TORQUE = 35
+PEN_TORQUE = 33
