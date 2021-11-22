@@ -87,12 +87,12 @@ class Robot:  # pylint: disable=too-many-instance-attributes
         """Drives through a given path"""
         for curve in path:
             self.drive_through_curve(curve, drawing=drawing)
+        self.lift_pen()
 
     def drive_through_curve(self, curve, drawing=True):
         """
         Drives the robot to the start position of the curve and drives through it.
         """
-        self.lift_pen()
         # Moves the robot
         self.move_to(curve.get_start_pos())
         self.change_angle(curve.get_start_angle())
@@ -130,6 +130,8 @@ class Robot:  # pylint: disable=too-many-instance-attributes
 
         # No change if line length is zero
         if line.length() > 1e-5:
+            self.lift_pen()
+
             # Changes angle
             self.change_angle(line.get_start_angle())
 
@@ -145,6 +147,8 @@ class Robot:  # pylint: disable=too-many-instance-attributes
         Turns the robot in the direction specified by the end_angle (in radians).
         """
         angle_delta = ((end_angle - self.angle) + math.pi) % (math.pi * 2) - math.pi
+
+        self.lift_pen()
         self.drive_base.turn(math.degrees(angle_delta))
 
         # Update params
