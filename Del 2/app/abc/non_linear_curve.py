@@ -31,9 +31,9 @@ class NonLinearCurve(Curve):
         traversed_length = 0
         look_up_table[traversed_length] = 0
 
-        last = self.get_pos(0)
+        last = self.get_pos(0)  # pylint: disable=assignment-from-no-return
         for t_param in t_params:
-            current = self.get_pos(t_param)
+            current = self.get_pos(t_param)  # pylint: disable=assignment-from-no-return
 
             step_length = math.sqrt(
                 (current.x - last.x) ** 2 + (current.y - last.y) ** 2
